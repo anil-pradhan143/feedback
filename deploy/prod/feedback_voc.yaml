@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: carstaxi-feedback-voc
+data:
+  appConfig.js: |
+    const appConfig = {
+      NODE_ENV: 'prod',
+      BASE_URL: 'https://buddysprod.carstaxi.ae/global/voc'
+    };

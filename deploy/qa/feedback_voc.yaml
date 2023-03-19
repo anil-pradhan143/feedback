@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: carstaxi-feedback-voc
+data:
+  appConfig.js: |
+    const appConfig = {
+      NODE_ENV: 'qa',
+      BASE_URL: 'https://buddysqa.agp-dev.com/global/voc'
+    };
