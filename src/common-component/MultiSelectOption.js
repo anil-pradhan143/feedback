@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { Checkbox, FormControlLabel } from "@mui/material";
 import { AppContext } from "../AppContext";
-import { useHistory } from "react-router-dom";
 import { CardContent, Typography } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
@@ -16,15 +15,16 @@ const Item = styled(Paper)(() => ({
   alignItems: "center",
   fontSize: "35px",
   fontWeight: "bold",
+  padding: "10%",
+  minWidth: "150px",
 }));
 
 export default function MultiSelectOption(props) {
   const [showInputBox, setShowInputBox] = useState(false);
-  const history = useHistory();
-  const [checkboxState, setCheckboxState] = useState(true);
-  const [lastCheckBox , setLastCheckBox] = useState(false)
+  const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
 
-  const { selectedItems } = useContext(AppContext)
+  const { selectedItems } = useContext(AppContext);
+
   const handleNext = (e) => {
     e.preventDefault();
     props.handleNext(selectedItems.join());
@@ -35,11 +35,22 @@ export default function MultiSelectOption(props) {
     props.handlePrev();
   };
 
-  const handleOnChange = (id, label) => {
-    toggle_element(`op${id}`, label);
-    label?.toLowerCase() === "others"
-      ? setShowInputBox(!showInputBox)
-      : setShowInputBox(false);
+  const handleOnChange = (event, itemLength, id, label) => {
+    let newArr = [...checkBoxState];
+
+    if (label?.toLowerCase() === "others") {
+      for (var i = 0; i < itemLength - 1; i++) {
+        newArr[i].checked = false;
+        toggle_element(`op${i + 1}`, label);
+      }
+      newArr[itemLength - 1].checked = !newArr[itemLength - 1].checked;
+      setShowInputBox(!showInputBox);
+    } else {
+      setShowInputBox(false);
+      newArr[id - 1].checked = !newArr[id - 1].checked;
+      toggle_element(`op${id}`, label);
+    }
+    setCheckboxState(newArr);
   };
 
   const toggle_element = (element_id, label) => {
@@ -53,47 +64,45 @@ export default function MultiSelectOption(props) {
       element.style.color = "rgb(0, 0, 0)";
       selectedItems.splice(selectedItems.indexOf(label), 1);
     }
-  }
-
-  const handleChange = (event,val) => {
-    if (event?.target?.value === "other" && event.target.checked) {
-      let get = document.getElementsByName('check');
-      for(var i=0; i<get.length; i++) {
-      get[i].checked = false;
-}
-    }
-    else{
-    setCheckboxState(event.target.checked);}
-    console.log("current check", event?.target?.value);
-    if(val===last){
-      setLastCheckBox(true)
-      setCheckboxState(false)
-    }else{
-      setCheckboxState(true)
-    }
   };
 
   const ItemList = () => {
-    const multiSelectItems =
-      props?.pageData?.options?.length > 0 ? props?.pageData?.options : [];
-    return multiSelectItems.map((items, index) => {
+    return checkBoxState?.map((items, index) => {
       return (
-        <Box sx={{
-          display: 'flex', flexDirection: 'row', textAlign: "center",
-          justifyContent: "center",
-          alignItems: "center"
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            textAlign: "center",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+          onClick={(event) =>
+            handleOnChange(
+              event,
+              checkBoxState?.length,
+              index + 1,
+              items?.label
+            )
+          }
+        >
           <FormControlLabel
-            control={<Checkbox checked={index === multiSelectItems?.length - 1 ? lastCheckBox :  checkboxState[index]} onChange={(evt)=>handleChange(evt,index=== multiSelectItems?.length-1 && 'last')} value={index <= 3 ? `checkbox${index + 1}` : "other"} name={index <= 3 ? "check" : "other"} />}
+            control={
+              <Checkbox
+                checked={items?.checked}
+                value={index}
+                name={
+                  index < checkBoxState?.length - 1
+                    ? `checkbox${index + 1}`
+                    : "other"
+                }
+              />
+            }
           />
-          <Item
-            elevation={2}
-            id={`op${index + 1}`}
-            onClick={() => handleOnChange(index + 1, items?.label)}
-          >
+          <Item elevation={2} id={`op${index + 1}`}>
             <p className="multiSelect-label" id={items?.label}>
-              {/* {items?.label} */}
-              SATISFACTORY
+              {items?.label}
             </p>
           </Item>
         </Box>
@@ -124,7 +133,6 @@ export default function MultiSelectOption(props) {
               m: 2,
               width: "200px",
               height: "auto",
-              padding: "20px",
             },
           }}
         >

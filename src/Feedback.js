@@ -30,11 +30,7 @@ const Feedback = () => {
   useEffect(() => {
     setPageData({});
     if (currentPage < 2) {
-      // GetRequest();
-      PatchRequest({
-        "key": "2a",
-        "value": ""
-    });
+      GetRequest();
     } else {
       PatchRequest(selectedKeys);
     }
@@ -61,8 +57,7 @@ const Feedback = () => {
     setPageData({});
     axios
       .patch(
-        // `${baseUrl}/${feedbackId}`,
-        'https://buddysdev.agp-dev.com/global/voc/6410d2b2dc36cec7912247fc',
+        `${baseUrl}/${feedbackId}`,
         {
           key: reqData?.key,
           value: reqData?.value,
@@ -85,20 +80,19 @@ const Feedback = () => {
   };
 
   const CardType = (responseData) => {
-    // if (responseData?.key === "contact") {
-    //   setCardType("form");
-    // } else if (responseData?.key === "submit") {
-    //   setCardType("submit");
-    // } else if (responseData?.options !== undefined) {
-    //   setCardType(
-    //     responseData?.options[0]?.label?.includes(":card") ? "card" : "list"
-    //   );
-    // } else if (responseData?.key === "8") {
-    //   setCardType("address");
-    // } else {
-    //   setCardType("text");
-    // }
-    setCardType("list");
+    if (responseData?.key === "contact") {
+      setCardType("form");
+    } else if (responseData?.key === "submit") {
+      setCardType("submit");
+    } else if (responseData?.options !== undefined) {
+      setCardType(
+        responseData?.options[0]?.label?.includes(":card") ? "card" : "list"
+      );
+    } else if (responseData?.key === "8") {
+      setCardType("address");
+    } else {
+      setCardType("text");
+    }
   };
 
   const handleNext = (selectedValue) => {
@@ -135,6 +129,14 @@ const Feedback = () => {
   };
 
   const PageComponent = () => {
+    let newArr = pageData?.options;
+    if (cardType === "list" && pageData?.options?.length > 0) {
+      for (let i = 0; i < pageData?.options.length; i++) {
+        newArr[i].checked = false;
+      }
+      console.log("feedback", newArr);
+    }
+
     switch (cardType) {
       case "card":
         return <HomeCard handleSubmit={handleNext} pageData={pageData} />;
@@ -143,7 +145,7 @@ const Feedback = () => {
           <MultiSelectOption
             handleNext={handleNext}
             handlePrev={handlePrev}
-            pageData={pageData}
+            pageData={{ options: newArr, label: pageData?.label }}
           />
         );
       case "address":
