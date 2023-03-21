@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { baseUrl } from "./Constants";
 
-const SubmitFeedback = () => {
+const Feedback = () => {
   const history = useHistory();
   const { search } = useLocation();
   const {
@@ -30,7 +30,11 @@ const SubmitFeedback = () => {
   useEffect(() => {
     setPageData({});
     if (currentPage < 2) {
-      GetRequest();
+      // GetRequest();
+      PatchRequest({
+        "key": "2a",
+        "value": ""
+    });
     } else {
       PatchRequest(selectedKeys);
     }
@@ -57,7 +61,8 @@ const SubmitFeedback = () => {
     setPageData({});
     axios
       .patch(
-        `${baseUrl}/${feedbackId}`,
+        // `${baseUrl}/${feedbackId}`,
+        'https://buddysdev.agp-dev.com/global/voc/6410d2b2dc36cec7912247fc',
         {
           key: reqData?.key,
           value: reqData?.value,
@@ -80,19 +85,20 @@ const SubmitFeedback = () => {
   };
 
   const CardType = (responseData) => {
-    if (responseData?.key === "contact") {
-      setCardType("form");
-    } else if (responseData?.key === "submit") {
-      setCardType("submit");
-    } else if (responseData?.options !== undefined) {
-      setCardType(
-        responseData?.options[0]?.label?.includes(":card") ? "card" : "list"
-      );
-    } else if (responseData?.key === "8") {
-      setCardType("address");
-    } else {
-      setCardType("text");
-    }
+    // if (responseData?.key === "contact") {
+    //   setCardType("form");
+    // } else if (responseData?.key === "submit") {
+    //   setCardType("submit");
+    // } else if (responseData?.options !== undefined) {
+    //   setCardType(
+    //     responseData?.options[0]?.label?.includes(":card") ? "card" : "list"
+    //   );
+    // } else if (responseData?.key === "8") {
+    //   setCardType("address");
+    // } else {
+    //   setCardType("text");
+    // }
+    setCardType("list");
   };
 
   const handleNext = (selectedValue) => {
@@ -238,4 +244,4 @@ const SubmitFeedback = () => {
   return PageComponent();
 };
 
-export default SubmitFeedback;
+export default Feedback;

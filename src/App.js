@@ -4,7 +4,6 @@ import { AppProvider } from "./AppContext";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Feedback from "./Feedback";
-import SubmitFeedback from "./SubmitFeedback";
 import { InvalidQRCode } from "./InvalidQRCode";
 import { Container } from "@mui/material";
 import Nav from "./common-component/Nav";
@@ -33,7 +32,6 @@ const App = () => {
             <Switch>
               <Route exact path="/voc" component={Feedback} />
               <Route path="/voc/feedback" component={Feedback} />
-              <Route path="/voc/submit-feedback" component={SubmitFeedback} />
               <Route exact path="/404" component={InvalidQRCode} />
             </Switch>
           </Router>

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import Box from "@mui/material/Box";
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { AppContext } from "../AppContext";
 import { useHistory } from "react-router-dom";
 import { CardContent, Typography } from "@mui/material";
@@ -20,9 +21,10 @@ const Item = styled(Paper)(() => ({
 export default function MultiSelectOption(props) {
   const [showInputBox, setShowInputBox] = useState(false);
   const history = useHistory();
+  const [checkboxState, setCheckboxState] = useState(true);
+  const [lastCheckBox , setLastCheckBox] = useState(false)
 
-  const { selectedItems } = useContext(AppContext);
-
+  const { selectedItems } = useContext(AppContext)
   const handleNext = (e) => {
     e.preventDefault();
     props.handleNext(selectedItems.join());
@@ -40,7 +42,7 @@ export default function MultiSelectOption(props) {
       : setShowInputBox(false);
   };
 
-  function toggle_element(element_id, label) {
+  const toggle_element = (element_id, label) => {
     var element = document.getElementById(element_id);
     if (element.style.backgroundColor !== "rgb(0, 106, 190)") {
       element.style.backgroundColor = "rgb(0, 106, 190)";
@@ -53,20 +55,48 @@ export default function MultiSelectOption(props) {
     }
   }
 
+  const handleChange = (event,val) => {
+    if (event?.target?.value === "other" && event.target.checked) {
+      let get = document.getElementsByName('check');
+      for(var i=0; i<get.length; i++) {
+      get[i].checked = false;
+}
+    }
+    else{
+    setCheckboxState(event.target.checked);}
+    console.log("current check", event?.target?.value);
+    if(val===last){
+      setLastCheckBox(true)
+      setCheckboxState(false)
+    }else{
+      setCheckboxState(true)
+    }
+  };
+
   const ItemList = () => {
     const multiSelectItems =
       props?.pageData?.options?.length > 0 ? props?.pageData?.options : [];
     return multiSelectItems.map((items, index) => {
       return (
-        <Item
-          elevation={2}
-          id={`op${index + 1}`}
-          onClick={() => handleOnChange(index + 1, items?.label)}
-        >
-          <p className="multiSelect-label" id={items?.label}>
-            {items?.label}
-          </p>
-        </Item>
+        <Box sx={{
+          display: 'flex', flexDirection: 'row', textAlign: "center",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <FormControlLabel
+            control={<Checkbox checked={index === multiSelectItems?.length - 1 ? lastCheckBox :  checkboxState[index]} onChange={(evt)=>handleChange(evt,index=== multiSelectItems?.length-1 && 'last')} value={index <= 3 ? `checkbox${index + 1}` : "other"} name={index <= 3 ? "check" : "other"} />}
+          />
+          <Item
+            elevation={2}
+            id={`op${index + 1}`}
+            onClick={() => handleOnChange(index + 1, items?.label)}
+          >
+            <p className="multiSelect-label" id={items?.label}>
+              {/* {items?.label} */}
+              SATISFACTORY
+            </p>
+          </Item>
+        </Box>
       );
     });
   };
