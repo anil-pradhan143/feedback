@@ -20,14 +20,18 @@ const Item = styled(Paper)(() => ({
 }));
 
 export default function MultiSelectOption(props) {
-  console.log("props",props)
-  const [showInputBox, setShowInputBox] = useState(false);
+  const [showInputBox, setShowInputBox] = useState(
+    props?.pageData?.options[props.pageData?.options?.length - 1].checked
+  );
   const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
-  const { selectedItems } = useContext(AppContext);
+  const { feedbackData, currentPage, selectedItems } = useContext(AppContext);
+  const [text, setText] = useState(
+    feedbackData?.[`page${currentPage + 1}`]?.extraParams
+  );
 
   const handleNext = (e) => {
     e.preventDefault();
-    props.handleNext(selectedItems.join());
+    props.handleNext(selectedItems.join(), text);
   };
 
   const handlePrev = (e) => {
@@ -39,40 +43,30 @@ export default function MultiSelectOption(props) {
     let newArr = [...checkBoxState];
 
     if (label?.toLowerCase() === "others") {
+      let OtherInitialState = newArr[itemLength - 1].checked;
       for (var i = 0; i < itemLength; i++) {
         newArr[i].checked = false;
-        newArr[id - i]?.checked ? selectedItems.push(label.toString().trim()):
-        selectedItems.splice(selectedItems.indexOf(label), 1);
+        newArr[id - i]?.checked
+          ? selectedItems.push(label.toString().trim())
+          : selectedItems.splice(selectedItems.indexOf(label), 1);
       }
-      newArr[itemLength - 1].checked = !newArr[itemLength - 1].checked;
-      newArr[id - 1]?.checked ? selectedItems.push(label.toString().trim()): selectedItems.splice(selectedItems.indexOf(label), 1);;
+      newArr[itemLength - 1].checked = !OtherInitialState;
+      newArr[id - 1]?.checked
+        ? selectedItems.push(label.toString().trim())
+        : selectedItems.splice(selectedItems.indexOf(label), 1);
       setShowInputBox(!showInputBox);
     } else {
       setShowInputBox(false);
-      newArr[itemLength-1].checked = false;
+      newArr[itemLength - 1].checked = false;
       newArr[id - 1].checked = !newArr[id - 1].checked;
-      newArr[id - 1].checked ? selectedItems.push(label.toString().trim()):
-      selectedItems.splice(selectedItems.indexOf(label), 1);
+      newArr[id - 1].checked
+        ? selectedItems.push(label.toString().trim())
+        : selectedItems.splice(selectedItems.indexOf(label), 1);
     }
-
     setCheckboxState(newArr);
   };
 
-  const toggle_element = (element_id, label) => {
-    var element = document.getElementById(element_id);
-    if (element.style.backgroundColor !== "rgb(0, 106, 190)") {
-      element.style.backgroundColor = "rgb(0, 106, 190)";
-      element.style.color = "rgb(255, 255, 255)";
-      selectedItems.push(label.toString().trim());
-    } else {
-      element.style.backgroundColor = "rgb(255, 255, 255)";
-      element.style.color = "rgb(0, 0, 0)";
-      selectedItems.splice(selectedItems.indexOf(label), 1);
-    }
-  };
-
   const ItemList = () => {
-    console.log("checkBoxState",checkBoxState)
     return checkBoxState?.map((items, index) => {
       return (
         <Box
@@ -84,12 +78,8 @@ export default function MultiSelectOption(props) {
             alignItems: "center",
             cursor: "pointer",
           }}
-          onClick={(event) =>
-            handleOnChange(
-              checkBoxState?.length,
-              index + 1,
-              items?.label
-            )
+          onClick={() =>
+            handleOnChange(checkBoxState?.length, index + 1, items?.label)
           }
         >
           <FormControlLabel
@@ -105,7 +95,22 @@ export default function MultiSelectOption(props) {
               />
             }
           />
-          <Item elevation={2} id={`op${index + 1}`}>
+          <Item
+            elevation={2}
+            id={`op${index + 1}`}
+            style={
+              items?.checked
+                ? {
+                    backgroundColor: "rgb(0, 106, 190)",
+                    color: "rgb(255, 255, 255)",
+                  }
+                : {
+                    backgroundColor: "rgb(255, 255, 255)",
+                    color: "rgb(0, 0, 0)",
+                  }
+            }
+            className="radioGroupItems"
+          >
             <p className="multiSelect-label" id={items?.label}>
               {items?.label}
             </p>
@@ -146,12 +151,15 @@ export default function MultiSelectOption(props) {
         {showInputBox && (
           <Box>
             <TextField
-              id="outlined-multiline-static"
+              id="otherText"
               label=""
               multiline
               rows={4}
-              defaultValue=""
+              defaultValue={text}
               fullWidth
+              onChange={(event) => {
+                setText(event.target.value);
+              }}
             />
           </Box>
         )}

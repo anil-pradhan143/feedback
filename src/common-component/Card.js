@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import { Typography } from "@mui/material";
+import { AppContext } from "../AppContext";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -15,6 +16,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function HomeCard(props) {
+  const { feedbackData, currentPage } = useContext(AppContext);
+
   const handleOnChange = (label) => {
     props.handleSubmit(label);
   };
@@ -31,9 +34,16 @@ export default function HomeCard(props) {
                 elevation={2}
                 id={`op${index + 1}`.toString()}
                 onClick={() => handleOnChange(items?.value)}
-                style={{
-                  backgroundColor: items?.label?.split("_")[3]?.split(":")[1],
-                }}
+                style={
+                  (index + 1)?.toString() ===
+                  feedbackData?.[`page${currentPage + 1}`]?.value
+                    ? { backgroundColor: "#006ABE", color: "#fff" }
+                    : {
+                        backgroundColor: items?.label
+                          ?.split("_")[3]
+                          ?.split(":")[1],
+                      }
+                }
                 className="radioGroupItems"
               >
                 <div className="card-items">

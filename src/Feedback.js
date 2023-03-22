@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 import { Typography } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import Box from "@mui/material/Box";
+import { useFormControl } from "@mui/material/FormControl";
 import axios from "axios";
 import { baseUrl } from "./Constants";
 
@@ -26,8 +27,12 @@ const Feedback = () => {
     setFeedbackId,
   } = useContext(AppContext);
   const [cardType, setCardType] = useState(null);
+  const [suggetionBox, setSuggetionBox] = useState(
+    feedbackData?.[`page${currentPage + 1}`]?.extraParams
+  );
+  const { error } = useFormControl() || {};
 
-  const[formValues,setFormValue] = useState({})
+  let formValues = {};
 
   useEffect(() => {
     setPageData({});
@@ -73,9 +78,12 @@ const Feedback = () => {
         }
       )
       .then((data) => {
-        setPageData(data?.data);
-        CardType(data?.data);
-        setCurrentpage(currentPage + 1);
+        if (data?.data?.key?.toLowerCase() === "submit") {
+          PatchRequest({ key: data?.data?.key, value: "" });
+        } else {
+          setPageData(data?.data);
+          CardType(data?.data);
+        }
       })
       .catch((err) => {
         console.log("err", err);
@@ -83,27 +91,27 @@ const Feedback = () => {
   };
 
   const CardType = (responseData) => {
-    if (responseData?.key === "contact") {
+    let responseDataKey = responseData?.key?.toLowerCase();
+    if (responseDataKey === "contact") {
       setCardType("form");
-    } else if (responseData?.key === "submit") {
-      setCardType("submit");
+    } else if (responseDataKey === "thankyou") {
+      setCardType(responseDataKey);
     } else if (responseData?.options !== undefined) {
       setCardType(
         responseData?.options[0]?.label?.includes(":card") ? "card" : "list"
       );
-    } else if (responseData?.key === "8") {
+    } else if (responseDataKey === "8") {
       setCardType("address");
     } else {
       setCardType("text");
     }
   };
 
-  const handleNext = (selectedValue) => {
-    console.log("feedback Data ==> ", feedbackData);
-    console.log("selectedValue ==> ", selectedValue);
+  const handleNext = (selectedValue, extraParams) => {
     let currentPageData = {
       key: pageData?.key,
       value: selectedValue.toString(),
+      extraParams: extraParams,
     };
     setFeedbackData((prevData) => {
       return {
@@ -111,8 +119,8 @@ const Feedback = () => {
         [`page${currentPage + 1}`]: currentPageData,
       };
     });
+    setCurrentpage(currentPage + 1);
     PatchRequest(currentPageData);
-    
   };
 
   const handlePrev = () => {
@@ -128,29 +136,50 @@ const Feedback = () => {
     handleNext(label);
   };
 
-  const handleFormSubmit = (formData) => {
-    handleNext("Anil pradhan,1234567890");
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if (error) {
+      alert("error");
+      return false;
+    }
+    let selectedValues = Object.keys(formValues)
+      .map((k) => formValues[k])
+      .join(",");
+    handleNext(selectedValues, formValues);
   };
 
+  const getCheckBoxState = (optionData) => {
+    if (feedbackData[`page${currentPage + 1}`]?.value) {
+      let splittedArray =
+        feedbackData[`page${currentPage + 1}`]?.value.split(",");
+      let isIndexMatch = false;
+      for (let i = 0; i < splittedArray?.length; i++) {
+        if (splittedArray[i] === optionData?.label) isIndexMatch = true;
+      }
+      return isIndexMatch;
+    } else {
+      return false;
+    }
+  };
   const PageComponent = () => {
     let newArr = pageData?.options;
-    if (cardType === "list" && pageData?.options?.length >0) {
-      for (let i = 0; i < pageData?.options.length; i++) {
-        newArr[i].checked = false;
+    if (cardType === "list" && newArr?.length > 0) {
+      for (let i = 0; i < newArr?.length; i++) {
+        newArr[i].checked = getCheckBoxState(newArr[i]);
       }
     }
 
-    switch (cardType) {
+    switch (cardType?.toLowerCase()) {
       case "card":
         return <HomeCard handleSubmit={handleNext} pageData={pageData} />;
       case "list":
-        return pageData?.options?.length >0?
-         <MultiSelectOption
+        return pageData?.options?.length > 0 ? (
+          <MultiSelectOption
             handleNext={handleNext}
             handlePrev={handlePrev}
             pageData={{ options: newArr, label: pageData?.label }}
           />
-        : null
+        ) : null;
       case "address":
         return (
           <HomeCard handleSubmit={handleConfirmation} pageData={pageData} />
@@ -164,12 +193,15 @@ const Feedback = () => {
             {pageData?.useFreeText && (
               <Box sx={{ m: 2 }}>
                 <TextField
-                  id="outlined-multiline-static"
+                  id="useFreeTextbox"
                   label=""
                   multiline
                   rows={4}
-                  defaultValue=""
+                  value={suggetionBox}
                   fullWidth
+                  onChange={(event) => {
+                    setSuggetionBox(event.target.value);
+                  }}
                 />
               </Box>
             )}
@@ -189,7 +221,7 @@ const Feedback = () => {
                 type="submit"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleNext(pageData?.key, "");
+                  handleNext(pageData?.key, suggetionBox);
                 }}
               >
                 Next
@@ -209,10 +241,13 @@ const Feedback = () => {
                         <TextField
                           id={items?.value}
                           label={items?.label}
+                          value={formValues[items?.value] ?? ""}
                           required={
                             pageData?.useOptionForm[index] >= 0 ? true : false
                           }
-                          onBlur={()=>{}}
+                          onBlur={(event) => {
+                            formValues[items.value] = event.target.value;
+                          }}
                         />
                       </Grid>
                     ))}
@@ -224,21 +259,20 @@ const Feedback = () => {
                   className="btnSubmit"
                   type="submit"
                   onClick={(e) => {
-                    e.preventDefault();
                     handleFormSubmit(e);
                   }}
                 >
-                  Submit
+                  SUBMIT
                 </button>
               </CardActions>
             </form>
           </>
         );
-      case "submit":
+      case "thankyou":
         return (
           <>
             <Typography variant="h5" sx={{ mt: 3 }}>
-              Thank You for Your Feedback
+              {pageData?.label}
             </Typography>
           </>
         );

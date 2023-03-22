@@ -31,7 +31,6 @@ const App = () => {
           <Router>
             <Switch>
               <Route exact path="/voc" component={Feedback} />
-              <Route path="/voc/feedback" component={Feedback} />
               <Route exact path="/404" component={InvalidQRCode} />
             </Switch>
           </Router>
