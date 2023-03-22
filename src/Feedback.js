@@ -27,6 +27,8 @@ const Feedback = () => {
   } = useContext(AppContext);
   const [cardType, setCardType] = useState(null);
 
+  const[formValues,setFormValue] = useState({})
+
   useEffect(() => {
     setPageData({});
     if (currentPage < 2) {
@@ -73,6 +75,7 @@ const Feedback = () => {
       .then((data) => {
         setPageData(data?.data);
         CardType(data?.data);
+        setCurrentpage(currentPage + 1);
       })
       .catch((err) => {
         console.log("err", err);
@@ -97,6 +100,7 @@ const Feedback = () => {
 
   const handleNext = (selectedValue) => {
     console.log("feedback Data ==> ", feedbackData);
+    console.log("selectedValue ==> ", selectedValue);
     let currentPageData = {
       key: pageData?.key,
       value: selectedValue.toString(),
@@ -108,7 +112,7 @@ const Feedback = () => {
       };
     });
     PatchRequest(currentPageData);
-    setCurrentpage(currentPage + 1);
+    
   };
 
   const handlePrev = () => {
@@ -130,24 +134,23 @@ const Feedback = () => {
 
   const PageComponent = () => {
     let newArr = pageData?.options;
-    if (cardType === "list" && pageData?.options?.length > 0) {
+    if (cardType === "list" && pageData?.options?.length >0) {
       for (let i = 0; i < pageData?.options.length; i++) {
         newArr[i].checked = false;
       }
-      console.log("feedback", newArr);
     }
 
     switch (cardType) {
       case "card":
         return <HomeCard handleSubmit={handleNext} pageData={pageData} />;
       case "list":
-        return (
-          <MultiSelectOption
+        return pageData?.options?.length >0?
+         <MultiSelectOption
             handleNext={handleNext}
             handlePrev={handlePrev}
             pageData={{ options: newArr, label: pageData?.label }}
           />
-        );
+        : null
       case "address":
         return (
           <HomeCard handleSubmit={handleConfirmation} pageData={pageData} />
@@ -209,6 +212,7 @@ const Feedback = () => {
                           required={
                             pageData?.useOptionForm[index] >= 0 ? true : false
                           }
+                          onBlur={()=>{}}
                         />
                       </Grid>
                     ))}

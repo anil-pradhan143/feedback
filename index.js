@@ -14,7 +14,6 @@ http
     }
     let pathname = `./build${parsedUrl.pathname}`;
     // based on the URL path, extract the file extension. e.g. .js, .doc, ...
-    console.log(pathname);
     const ext = path.parse(pathname).ext || '.html';
     // maps file extension to MIME typere
     const map = {
