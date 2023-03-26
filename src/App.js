@@ -6,7 +6,7 @@ import Paper from "@mui/material/Paper";
 import Feedback from "./Feedback";
 import { InvalidQRCode } from "./InvalidQRCode";
 import { Container } from "@mui/material";
-import CarTaxi from "../src/assets/cars-taxi.png";
+
 import { Box, Typography } from "@mui/material";
 import "./App.css";
 
@@ -27,13 +27,7 @@ const StyledCard = styled((props) => {
   maxWidth: "400px",
   display: "flex",
   flexDirection: "column",
-}));
-
-const CtTaxiNumber = styled(Box)(() => ({
-  color: "#2D1F7A",
-  opacity: "66%",
-  fontSize: "11px",
-  lineHeight: "14px",
+  height: "100%",
 }));
 
 const App = () => {
@@ -42,9 +36,6 @@ const App = () => {
       <Container>
         <StyledCard variant="outlined">
           <Box>
-            <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
-          </Box>
-          <Box sx={{ flexGrow: 1 }}>
             <Router>
               <Switch>
                 <Route exact path="/voc" component={Feedback} />
@@ -52,10 +43,6 @@ const App = () => {
               </Switch>
             </Router>
           </Box>
-
-          <CtTaxiNumber>
-            <Typography>CT-3422</Typography>
-          </CtTaxiNumber>
         </StyledCard>
       </Container>
     </AppProvider>

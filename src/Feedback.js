@@ -5,12 +5,21 @@ import { AppContext } from "./AppContext";
 import HomeCard from "./common-component/CardList";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
-import { Typography } from "@mui/material";
+import { Typography, Paper } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import { useFormControl } from "@mui/material/FormControl";
 import axios from "axios";
 import { baseUrl } from "./Constants";
+import CarTaxi from "./assets/cars-taxi.png";
+
+const CtTaxiNumber = styled(Box)(() => ({
+  color: "#2D1F7A",
+  opacity: "66%",
+  fontSize: "11px",
+  lineHeight: "14px",
+}));
 
 const Feedback = () => {
   const history = useHistory();
@@ -25,6 +34,9 @@ const Feedback = () => {
     currentPage,
     setCurrentpage,
     setFeedbackId,
+    footerButtons,
+    setFooterButtons,
+    selectedItems,
   } = useContext(AppContext);
   const [cardType, setCardType] = useState(null);
   const [suggetionBox, setSuggetionBox] = useState(
@@ -50,7 +62,7 @@ const Feedback = () => {
         if (data?.data === "Invalid or Expired QR code") {
           history.push("/404");
         } else {
-          setFeedbackId(data?.data?.feedbackId);
+          setFeedbackId("641b5f43f160fd4e3a0d97ca");
           setPageData(data?.data);
           CardType(data?.data);
         }
@@ -81,55 +93,7 @@ const Feedback = () => {
         if (data?.data?.key?.toLowerCase() === "submit") {
           PatchRequest({ key: data?.data?.key, value: "" });
         } else {
-          setPageData({
-            key: "3c",
-            message: {
-              EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
-            },
-            label: {
-              EN: "How would you rate our Driver?",
-            },
-            useMultiSelect: true,
-            options: [
-              {
-                value: "Driving Skills",
-                label: {
-                  EN: "Driving Skills",
-                },
-              },
-              {
-                value: "Knowledge of Routes",
-                label: {
-                  EN: "Knowledge of Routes",
-                },
-              },
-              {
-                value: "Attitude and Behavior",
-                label: {
-                  EN: "Attitude and Behavior",
-                },
-              },
-              {
-                value: "Grooming and Personal Hygiene",
-                label: {
-                  EN: "Grooming and Personal Hygiene",
-                },
-              },
-              {
-                value: "Communication Skills",
-                label: {
-                  EN: "Communication Skills",
-                },
-              },
-              {
-                value: "Others",
-                label: {
-                  EN: "Others",
-                },
-              },
-            ],
-            next: "5b",
-          });
+          setPageData(data?.data);
           CardType(data?.data);
         }
       })
@@ -140,7 +104,7 @@ const Feedback = () => {
             EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
           },
           label: {
-            EN: "How would you rate our Driver?",
+            EN: "Any other suggestions?",
           },
           useMultiSelect: true,
           options: [
@@ -245,6 +209,8 @@ const Feedback = () => {
       setCardType("list");
     } else if (responseDataKey === "8") {
       setCardType("address");
+    } else if (responseData?.useFreeText) {
+      setCardType("suggetion");
     } else {
       setCardType("card");
     }
@@ -263,6 +229,11 @@ const Feedback = () => {
       };
     });
     setCurrentpage(currentPage + 1);
+    if (currentPage === 1) {
+      setFooterButtons(["Next"]);
+    } else {
+      setFooterButtons(["Prev", "Next"]);
+    }
     PatchRequest(currentPageData);
   };
 
@@ -275,6 +246,15 @@ const Feedback = () => {
     setCurrentpage(currentPage - 1);
   };
 
+  const handleClick = (clickEvent) => {
+    console.log(clickEvent?.target?.textContent);
+    if (clickEvent?.target?.textContent === "Next") {
+      let selectedValues = selectedItems.map((k) => k).join(",");
+      handleNext(selectedValues);
+    } else {
+      handlePrev();
+    }
+  };
   const handleConfirmation = (label) => {
     handleNext(label);
   };
@@ -304,6 +284,7 @@ const Feedback = () => {
       return false;
     }
   };
+
   const PageComponent = () => {
     let newArr = pageData?.options;
     if (cardType === "list" && newArr?.length > 0) {
@@ -311,8 +292,7 @@ const Feedback = () => {
         newArr[i].checked = getCheckBoxState(newArr[i]);
       }
     }
-    console.log(newArr);
-    console.log("pageData?.label['EN']", pageData?.label?.["EN"]);
+
     switch (cardType?.toLowerCase()) {
       case "card":
         return <HomeCard handleSubmit={handleNext} pageData={pageData} />;
@@ -321,21 +301,35 @@ const Feedback = () => {
           <MultiSelectCardList
             handleNext={handleNext}
             handlePrev={handlePrev}
-            pageData={{ options: newArr, label: pageData?.label?.["EN"] }}
+            pageData={{ options: newArr, label: pageData?.label }}
           />
         ) : null;
       case "address":
         return (
           <HomeCard handleSubmit={handleConfirmation} pageData={pageData} />
         );
-      case "text":
+      case "suggetion":
         return (
-          <>
-            <Typography variant="h5" sx={{ mt: 3 }}>
-              {pageData?.label}
-            </Typography>
+          <Box>
+            <Box sx={{ mb: 2 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontFamily: "roboto",
+                  fontSize: "20px",
+                  lineHeight: "26px",
+                  fontWeight: 400,
+                  color: "rgba(45, 31, 122, 0.9)",
+                  opacity: "70%",
+                  textDecoration: "none",
+                  textTransform: "capitalize",
+                }}
+              >
+                {pageData?.label}
+              </Typography>
+            </Box>
             {pageData?.useFreeText && (
-              <Box sx={{ m: 2 }}>
+              <Box sx={{ border: "1px solid #362593", borderRadius: "10px" }}>
                 <TextField
                   id="useFreeTextbox"
                   label=""
@@ -349,29 +343,7 @@ const Feedback = () => {
                 />
               </Box>
             )}
-            <CardActions sx={{ justifyContent: "center" }}>
-              <button
-                className="btnPrev"
-                type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePrev();
-                }}
-              >
-                Prev
-              </button>
-              <button
-                className="btnNext"
-                type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNext(pageData?.key, suggetionBox);
-                }}
-              >
-                Next
-              </button>
-            </CardActions>
-          </>
+          </Box>
         );
       case "form":
         return (
@@ -431,7 +403,87 @@ const Feedback = () => {
     }
   };
 
-  return PageComponent();
+  return (
+    <Box
+      className="container"
+      sx={{ display: "flex", flexDirection: "column", height: "764px" }}
+    >
+      <Box className="header" sx={currentPage === 1 ? {} : { pb: "50px" }}>
+        <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
+      </Box>
+      <Box className="component" sx={{ flex: 1 }}>
+        {PageComponent()}
+      </Box>
+      <Box className="footer">
+        {currentPage === 2 && (
+          <Box>
+            <Typography
+              sx={{
+                color: "#2D1F7A",
+                fontSize: "17px",
+                fontWeight: 600,
+                opacity: "70%",
+                mb: "50px",
+              }}
+            >
+              Wow, thank you! Help us understand the parts of your experience
+              that impressed you the most....
+            </Typography>
+          </Box>
+        )}
+        {currentPage !== 1 && footerButtons.length > 0 && (
+          <Box onClick={(clickEvent) => handleClick(clickEvent)}>
+            {footerButtons.map((button) => {
+              let currrentButton = button?.toLowerCase();
+              return (
+                <Paper
+                  elevation={2}
+                  id={button}
+                  className="radioGroupItems"
+                  sx={{
+                    padding: "10px 20px",
+                    font: "Raleway",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    lineHeight: "16px",
+                    gap: "10px",
+                    minWidth: "80%",
+                    background:
+                      currrentButton === "prev" ? "#FFFFFF" : "#34248F",
+
+                    border: "1px solid rgba(45, 31, 122, 0.66)",
+                    borderRadius: "5px",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontFamily: "roboto",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      lineHeight: "16px",
+                      color: "#2D1F7A",
+                      color: currrentButton === "prev" ? "#2D1F7A" : "#FFFFFF",
+                      opacity: currrentButton === "prev" ? "70%" : "100%",
+                      textDecoration: "none",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {button}
+                  </Typography>
+                </Paper>
+              );
+            })}
+          </Box>
+        )}
+        {currentPage === 1 && (
+          <CtTaxiNumber>
+            <Typography>CT-3422</Typography>
+          </CtTaxiNumber>
+        )}
+      </Box>
+    </Box>
+  );
 };
 
 export default Feedback;

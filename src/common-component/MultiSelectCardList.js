@@ -24,16 +24,11 @@ const Item = styled(Paper)(() => ({
   marginBottom: "12px",
 }));
 
-const FooterButtons = styled(Box)(() => ({
-  marginTop: "60px",
-  width: "100%",
-}));
-
 export default function MultiSelectCardList(props) {
   const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
   const { feedbackData, currentPage, selectedItems, footerButtons } =
     useContext(AppContext);
-  const [checked, setChecked] = React.useState([0]);
+  const [checked, setChecked] = useState([0]);
 
   const handleToggle = (event, value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -88,7 +83,7 @@ export default function MultiSelectCardList(props) {
         >
           <Item
             elevation={2}
-            id={`op${index + 1}`}
+            id={index + 1}
             className="radioGroupItems"
             onClick={(event) => handleToggle(event, index)}
             sx={
@@ -125,7 +120,7 @@ export default function MultiSelectCardList(props) {
                   textTransform: "capitalize",
                 }}
               >
-                {items?.value}
+                {items?.label}
               </Typography>
               {items?.value?.toLowerCase()?.trim() === "others" &&
                 items?.checked && (
@@ -142,17 +137,16 @@ export default function MultiSelectCardList(props) {
   };
 
   return (
-    <Container
+    <Box
       className="multiSelectGroup"
       sx={{
-        padding: "30px 0px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
       }}
     >
-      <Box sx={{ mt: 3 }}>
+      <Box>
         <Typography
           variant="h5"
           sx={{
@@ -179,51 +173,7 @@ export default function MultiSelectCardList(props) {
           Select one or more:
         </Typography>
       </Box>
-      <Box sx={{ mb: 3, width: "100%" }}>{ItemList()}</Box>
-      {footerButtons.length > 0 && (
-        <FooterButtons>
-          {footerButtons.map((button) => {
-            let currrentButton = button?.toLowerCase();
-            return (
-              <Paper
-                elevation={2}
-                id={button}
-                className="radioGroupItems"
-                sx={{
-                  padding: "10px 20px",
-                  font: "Raleway",
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  lineHeight: "16px",
-                  gap: "10px",
-                  minWidth: "80%",
-                  background: currrentButton === "prev" ? "#FFFFFF" : "#34248F",
-
-                  border: "1px solid rgba(45, 31, 122, 0.66)",
-                  borderRadius: "5px",
-                  marginBottom: "12px",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: "roboto",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    lineHeight: "16px",
-                    color: "#2D1F7A",
-                    color: currrentButton === "prev" ? "#2D1F7A" : "#FFFFFF",
-                    opacity: currrentButton === "prev" ? "70%" : "100%",
-                    textDecoration: "none",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {button}
-                </Typography>
-              </Paper>
-            );
-          })}
-        </FooterButtons>
-      )}
-    </Container>
+      <Box sx={{ width: "100%" }}>{ItemList()}</Box>
+    </Box>
   );
 }
