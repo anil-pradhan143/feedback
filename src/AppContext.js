@@ -10,6 +10,7 @@ export const AppProvider = (props) => {
   const [currentPage, setCurrentpage] = useState(1);
   const [pageData, setPageData] = useState({});
   const [feedbackData, setFeedbackData] = useState({});
+  const [footerButtons, setFooterButtons] = useState(["Prev", "Next"]);
 
   return (
     <>
@@ -29,6 +30,8 @@ export const AppProvider = (props) => {
           setFeedbackData,
           currentPage,
           setCurrentpage,
+          footerButtons,
+          setFooterButtons,
         }}
       >
         {props.children}

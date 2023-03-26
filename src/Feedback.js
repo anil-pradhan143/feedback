@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import MultiSelectOption from "./common-component/MultiSelectOption";
+import MultiSelectCardList from "./common-component/MultiSelectCardList";
 import { AppContext } from "./AppContext";
-import HomeCard from "./common-component/Card";
+import HomeCard from "./common-component/CardList";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Typography } from "@mui/material";
@@ -81,12 +81,157 @@ const Feedback = () => {
         if (data?.data?.key?.toLowerCase() === "submit") {
           PatchRequest({ key: data?.data?.key, value: "" });
         } else {
-          setPageData(data?.data);
+          setPageData({
+            key: "3c",
+            message: {
+              EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
+            },
+            label: {
+              EN: "How would you rate our Driver?",
+            },
+            useMultiSelect: true,
+            options: [
+              {
+                value: "Driving Skills",
+                label: {
+                  EN: "Driving Skills",
+                },
+              },
+              {
+                value: "Knowledge of Routes",
+                label: {
+                  EN: "Knowledge of Routes",
+                },
+              },
+              {
+                value: "Attitude and Behavior",
+                label: {
+                  EN: "Attitude and Behavior",
+                },
+              },
+              {
+                value: "Grooming and Personal Hygiene",
+                label: {
+                  EN: "Grooming and Personal Hygiene",
+                },
+              },
+              {
+                value: "Communication Skills",
+                label: {
+                  EN: "Communication Skills",
+                },
+              },
+              {
+                value: "Others",
+                label: {
+                  EN: "Others",
+                },
+              },
+            ],
+            next: "5b",
+          });
           CardType(data?.data);
         }
       })
       .catch((err) => {
-        console.log("err", err);
+        setPageData({
+          key: "3c",
+          message: {
+            EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
+          },
+          label: {
+            EN: "How would you rate our Driver?",
+          },
+          useMultiSelect: true,
+          options: [
+            {
+              value: "Driving Skills",
+              label: {
+                EN: "Driving Skills",
+              },
+            },
+            {
+              value: "Knowledge of Routes",
+              label: {
+                EN: "Knowledge of Routes",
+              },
+            },
+            {
+              value: "Attitude and Behavior",
+              label: {
+                EN: "Attitude and Behavior",
+              },
+            },
+            {
+              value: "Grooming and Personal Hygiene",
+              label: {
+                EN: "Grooming and Personal Hygiene",
+              },
+            },
+            {
+              value: "Communication Skills",
+              label: {
+                EN: "Communication Skills",
+              },
+            },
+            {
+              value: "Others",
+              label: {
+                EN: "Others",
+              },
+            },
+          ],
+          next: "5b",
+        });
+        CardType({
+          key: "3c",
+          message: {
+            EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
+          },
+          label: {
+            EN: "How would you rate our Driver?",
+          },
+          useMultiSelect: true,
+          options: [
+            {
+              value: "Driving Skills",
+              label: {
+                EN: "Driving Skills",
+              },
+            },
+            {
+              value: "Knowledge of Routes",
+              label: {
+                EN: "Knowledge of Routes",
+              },
+            },
+            {
+              value: "Attitude and Behavior",
+              label: {
+                EN: "Attitude and Behavior",
+              },
+            },
+            {
+              value: "Grooming and Personal Hygiene",
+              label: {
+                EN: "Grooming and Personal Hygiene",
+              },
+            },
+            {
+              value: "Communication Skills",
+              label: {
+                EN: "Communication Skills",
+              },
+            },
+            {
+              value: "Others",
+              label: {
+                EN: "Others",
+              },
+            },
+          ],
+          next: "5b",
+        });
       });
   };
 
@@ -96,14 +241,12 @@ const Feedback = () => {
       setCardType("form");
     } else if (responseDataKey === "thankyou") {
       setCardType(responseDataKey);
-    } else if (responseData?.options !== undefined) {
-      setCardType(
-        responseData?.options[0]?.label?.includes(":card") ? "card" : "list"
-      );
+    } else if (responseData?.useMultiSelect) {
+      setCardType("list");
     } else if (responseDataKey === "8") {
       setCardType("address");
     } else {
-      setCardType("text");
+      setCardType("card");
     }
   };
 
@@ -168,16 +311,17 @@ const Feedback = () => {
         newArr[i].checked = getCheckBoxState(newArr[i]);
       }
     }
-
+    console.log(newArr);
+    console.log("pageData?.label['EN']", pageData?.label?.["EN"]);
     switch (cardType?.toLowerCase()) {
       case "card":
         return <HomeCard handleSubmit={handleNext} pageData={pageData} />;
       case "list":
         return pageData?.options?.length > 0 ? (
-          <MultiSelectOption
+          <MultiSelectCardList
             handleNext={handleNext}
             handlePrev={handlePrev}
-            pageData={{ options: newArr, label: pageData?.label }}
+            pageData={{ options: newArr, label: pageData?.label?.["EN"] }}
           />
         ) : null;
       case "address":
@@ -277,7 +421,13 @@ const Feedback = () => {
           </>
         );
       default:
-        return <HomeCard handleSubmit={handleNext} pageData={pageData} />;
+        return pageData?.options?.length > 0 ? (
+          <MultiSelectCardList
+            handleNext={handleNext}
+            handlePrev={handlePrev}
+            pageData={{ options: newArr, label: pageData?.label?.["EN"] }}
+          />
+        ) : null;
     }
   };
 
