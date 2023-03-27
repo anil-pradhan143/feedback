@@ -7,7 +7,7 @@ import Feedback from "./Feedback";
 import { InvalidQRCode } from "./InvalidQRCode";
 import { Container } from "@mui/material";
 
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import "./App.css";
 
 const StyledCard = styled((props) => {

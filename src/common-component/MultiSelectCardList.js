@@ -1,9 +1,6 @@
 import React, { useState, useContext } from "react";
-import Box from "@mui/material/Box";
-import { Container, TextField } from "@mui/material";
+import { Box, TextField, Typography, Paper } from "@mui/material";
 import { AppContext } from "../AppContext";
-import { Typography } from "@mui/material";
-import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import "./CustomCheckbox.css";
 
@@ -26,9 +23,10 @@ const Item = styled(Paper)(() => ({
 
 export default function MultiSelectCardList(props) {
   const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
-  const { feedbackData, currentPage, selectedItems, footerButtons } =
+  const { setFeedbackData, currentPage, selectedItems } =
     useContext(AppContext);
   const [checked, setChecked] = useState([0]);
+  const [freeText, setFreeText] = useState("");
 
   const handleToggle = (event, value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -65,6 +63,18 @@ export default function MultiSelectCardList(props) {
         ? selectedItems.push(label.toString().trim())
         : selectedItems.splice(selectedItems.indexOf(label), 1);
     }
+
+    let currentPageData = {
+      key: props?.pageData?.key,
+      value: selectedItems.map((k) => k).join(","),
+      extraParams: freeText,
+    };
+    setFeedbackData((prevData) => {
+      return {
+        ...prevData,
+        [`page${currentPage}`]: currentPageData,
+      };
+    });
     setCheckboxState(newArr);
   };
 
@@ -126,7 +136,11 @@ export default function MultiSelectCardList(props) {
                 items?.checked && (
                   <TextField
                     sx={{ backgroundColor: "#fff" }}
-                    onClick={(e) => e.preventDefault()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onChange={(e) => setFreeText(e?.target?.value)}
                   ></TextField>
                 )}
             </Box>

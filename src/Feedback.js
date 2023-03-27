@@ -6,10 +6,8 @@ import HomeCard from "./common-component/CardList";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Typography, Paper } from "@mui/material";
-import CardActions from "@mui/material/CardActions";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { useFormControl } from "@mui/material/FormControl";
 import axios from "axios";
 import { baseUrl } from "./Constants";
 import CarTaxi from "./assets/cars-taxi.png";
@@ -36,13 +34,8 @@ const Feedback = () => {
     setFeedbackId,
     footerButtons,
     setFooterButtons,
-    selectedItems,
   } = useContext(AppContext);
   const [cardType, setCardType] = useState(null);
-  const [suggetionBox, setSuggetionBox] = useState(
-    feedbackData?.[`page${currentPage + 1}`]?.extraParams
-  );
-  const { error } = useFormControl() || {};
 
   let formValues = {};
 
@@ -97,104 +90,17 @@ const Feedback = () => {
           CardType(data?.data);
         }
       })
-      .catch((err) => {
+      .catch(() => {
+        setFooterButtons(["Go to CarsTaxi.ae"]);
         setPageData({
-          key: "3c",
-          message: {
-            EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
-          },
-          label: {
-            EN: "Any other suggestions?",
-          },
-          useMultiSelect: true,
-          options: [
-            {
-              value: "Driving Skills",
-              label: {
-                EN: "Driving Skills",
-              },
-            },
-            {
-              value: "Knowledge of Routes",
-              label: {
-                EN: "Knowledge of Routes",
-              },
-            },
-            {
-              value: "Attitude and Behavior",
-              label: {
-                EN: "Attitude and Behavior",
-              },
-            },
-            {
-              value: "Grooming and Personal Hygiene",
-              label: {
-                EN: "Grooming and Personal Hygiene",
-              },
-            },
-            {
-              value: "Communication Skills",
-              label: {
-                EN: "Communication Skills",
-              },
-            },
-            {
-              value: "Others",
-              label: {
-                EN: "Others",
-              },
-            },
-          ],
-          next: "5b",
+          key: "thankyou",
+          label: "Thank you for your feedback!",
+          next: "submit",
         });
         CardType({
-          key: "3c",
-          message: {
-            EN: `Wow, thank you! Which part of your experience did impress you the  most?`,
-          },
-          label: {
-            EN: "How would you rate our Driver?",
-          },
-          useMultiSelect: true,
-          options: [
-            {
-              value: "Driving Skills",
-              label: {
-                EN: "Driving Skills",
-              },
-            },
-            {
-              value: "Knowledge of Routes",
-              label: {
-                EN: "Knowledge of Routes",
-              },
-            },
-            {
-              value: "Attitude and Behavior",
-              label: {
-                EN: "Attitude and Behavior",
-              },
-            },
-            {
-              value: "Grooming and Personal Hygiene",
-              label: {
-                EN: "Grooming and Personal Hygiene",
-              },
-            },
-            {
-              value: "Communication Skills",
-              label: {
-                EN: "Communication Skills",
-              },
-            },
-            {
-              value: "Others",
-              label: {
-                EN: "Others",
-              },
-            },
-          ],
-          next: "5b",
+          key: "thankyou",
+          label: "Thank you for your feedback!",
+          next: "submit",
         });
       });
   };
@@ -216,21 +122,12 @@ const Feedback = () => {
     }
   };
 
-  const handleNext = (selectedValue, extraParams) => {
-    let currentPageData = {
-      key: pageData?.key,
-      value: selectedValue.toString(),
-      extraParams: extraParams,
-    };
-    setFeedbackData((prevData) => {
-      return {
-        ...prevData,
-        [`page${currentPage + 1}`]: currentPageData,
-      };
-    });
+  const handleNext = (currentPageData) => {
     setCurrentpage(currentPage + 1);
     if (currentPage === 1) {
-      setFooterButtons(["Next"]);
+      setFooterButtons(["Prev"]);
+    } else if (currentPage === 8) {
+      setFooterButtons(["Submit"]);
     } else {
       setFooterButtons(["Prev", "Next"]);
     }
@@ -247,34 +144,33 @@ const Feedback = () => {
   };
 
   const handleClick = (clickEvent) => {
-    console.log(clickEvent?.target?.textContent);
-    if (clickEvent?.target?.textContent === "Next") {
-      let selectedValues = selectedItems.map((k) => k).join(",");
-      handleNext(selectedValues);
-    } else {
+    console.log("feedback", feedbackData);
+    if (clickEvent?.target?.textContent === "Prev") {
       handlePrev();
+    } else {
+      // let selectedValues = selectedItems.map((k) => k).join(",");
+      handleNext(feedbackData?.[`page${currentPage}`]);
     }
   };
   const handleConfirmation = (label) => {
     handleNext(label);
   };
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    if (error) {
-      alert("error");
-      return false;
-    }
-    let selectedValues = Object.keys(formValues)
-      .map((k) => formValues[k])
-      .join(",");
-    handleNext(selectedValues, formValues);
-  };
+  // const handleFormSubmit = (event) => {
+  //   event.preventDefault();
+  //   if (error) {
+  //     alert("error");
+  //     return false;
+  //   }
+  //   let selectedValues = Object.keys(formValues)
+  //     .map((k) => formValues[k])
+  //     .join(",");
+  //   handleNext(selectedValues, formValues);
+  // };
 
   const getCheckBoxState = (optionData) => {
-    if (feedbackData[`page${currentPage + 1}`]?.value) {
-      let splittedArray =
-        feedbackData[`page${currentPage + 1}`]?.value.split(",");
+    if (feedbackData[`page${currentPage}`]?.value) {
+      let splittedArray = feedbackData[`page${currentPage}`]?.value.split(",");
       let isIndexMatch = false;
       for (let i = 0; i < splittedArray?.length; i++) {
         if (splittedArray[i] === optionData?.label) isIndexMatch = true;
@@ -283,6 +179,19 @@ const Feedback = () => {
     } else {
       return false;
     }
+  };
+
+  const handleSuggetion = (suggestionEvent) => {
+    let currentPageData = {
+      key: pageData?.key,
+      value: suggestionEvent?.target?.value,
+    };
+    setFeedbackData((prevData) => {
+      return {
+        ...prevData,
+        [`page${currentPage}`]: currentPageData,
+      };
+    });
   };
 
   const PageComponent = () => {
@@ -301,7 +210,11 @@ const Feedback = () => {
           <MultiSelectCardList
             handleNext={handleNext}
             handlePrev={handlePrev}
-            pageData={{ options: newArr, label: pageData?.label }}
+            pageData={{
+              options: newArr,
+              label: pageData?.label,
+              key: pageData?.key,
+            }}
           />
         ) : null;
       case "address":
@@ -335,11 +248,11 @@ const Feedback = () => {
                   label=""
                   multiline
                   rows={4}
-                  value={suggetionBox}
+                  value={feedbackData?.[`page${currentPage}`]?.value}
                   fullWidth
-                  onChange={(event) => {
-                    setSuggetionBox(event.target.value);
-                  }}
+                  onChange={(suggestionEvent) =>
+                    handleSuggetion(suggestionEvent)
+                  }
                 />
               </Box>
             )}
@@ -347,50 +260,70 @@ const Feedback = () => {
         );
       case "form":
         return (
-          <>
-            <form>
-              <Grid sx={{ flexGrow: 1, mt: 2 }} container spacing={2}>
-                <Grid item xs={12}>
-                  <Grid container justifyContent="center" spacing={2}>
-                    {pageData?.options?.map((items, index) => (
-                      <Grid key={items?.label} item xs={12}>
-                        <TextField
-                          id={items?.value}
-                          label={items?.label}
-                          value={formValues[items?.value] ?? ""}
-                          required={
-                            pageData?.useOptionForm[index] >= 0 ? true : false
-                          }
-                          onBlur={(event) => {
-                            formValues[items.value] = event.target.value;
-                          }}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Grid>
-              </Grid>
-              <CardActions sx={{ justifyContent: "center" }}>
-                <button
-                  className="btnSubmit"
-                  type="submit"
-                  onClick={(e) => {
-                    handleFormSubmit(e);
+          <form>
+            <Grid sx={{ flexGrow: 1, mt: 2 }} container spacing={2}>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    color: "#2D1F7A",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    opacity: "70%",
                   }}
                 >
-                  SUBMIT
-                </button>
-              </CardActions>
-            </form>
-          </>
+                  {pageData?.label}
+                </Typography>
+                <Grid container justifyContent="center" spacing={2}>
+                  {pageData?.options?.map((items, index) => (
+                    <Grid key={items?.label} item xs={12}>
+                      <Typography sx={{ display: "flex", color: "#362593" }}>
+                        {items?.label}
+                        {pageData?.useOptionForm[index] !== index &&
+                          " (optional)"}
+                      </Typography>
+                      <TextField
+                        sx={{
+                          border: "1px solid #2D1F7A",
+                          borderRadius: "10px",
+                        }}
+                        id={items?.value}
+                        label=""
+                        value={formValues[items?.value] ?? ""}
+                        required={
+                          pageData?.useOptionForm[index] >= 0 ? true : false
+                        }
+                        onBlur={(event) => {
+                          formValues[items.value] = event.target.value;
+                        }}
+                        fullWidth
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            </Grid>
+          </form>
         );
       case "thankyou":
         return (
-          <>
-            <Typography variant="h5" sx={{ mt: 3 }}>
+          <Box
+            sx={{
+              mt: "50%",
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#2D1F7A",
+                fontSize: "22px",
+                fontWeight: 400,
+                opacity: "70%",
+                padding: "10%",
+              }}
+            >
               {pageData?.label}
             </Typography>
-          </>
+          </Box>
         );
       default:
         return pageData?.options?.length > 0 ? (
@@ -426,8 +359,7 @@ const Feedback = () => {
                 mb: "50px",
               }}
             >
-              Wow, thank you! Help us understand the parts of your experience
-              that impressed you the most....
+              {pageData?.message}
             </Typography>
           </Box>
         )}
@@ -462,11 +394,10 @@ const Feedback = () => {
                       fontSize: "14px",
                       fontWeight: 600,
                       lineHeight: "16px",
-                      color: "#2D1F7A",
                       color: currrentButton === "prev" ? "#2D1F7A" : "#FFFFFF",
                       opacity: currrentButton === "prev" ? "70%" : "100%",
                       textDecoration: "none",
-                      textTransform: "capitalize",
+                      textTransform: "none",
                     }}
                   >
                     {button}

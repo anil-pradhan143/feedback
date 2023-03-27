@@ -7,7 +7,7 @@ export const AppProvider = (props) => {
 
   const [feedbackId, setFeedbackId] = useState("");
   const [cardType, setCardType] = useState("");
-  const [currentPage, setCurrentpage] = useState(1);
+  const [currentPage, setCurrentpage] = useState(8);
   const [pageData, setPageData] = useState({});
   const [feedbackData, setFeedbackData] = useState({});
   const [footerButtons, setFooterButtons] = useState(["Prev", "Next"]);

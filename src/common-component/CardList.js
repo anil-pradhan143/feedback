@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import Box from "@mui/material/Box";
 import { Container } from "@mui/material";
 import { AppContext } from "../AppContext";
@@ -30,28 +30,31 @@ const StyledBox = styled(Box)(() => ({
 }));
 
 export default function CardList(props) {
-  const {
-    feedbackData,
-    currentPage,
-    selectedItems,
-    footerButtons,
-    setFooterButtons,
-  } = useContext(AppContext);
-  const [selectedValue, setSelectedValue] = useState("");
+  const { feedbackData, setFeedbackData, currentPage } = useContext(AppContext);
 
   const handleClick = (e) => {
     e.preventDefault();
-    setSelectedValue(e?.target?.id);
-    props.handleSubmit(e?.target?.id);
+    let currentPageData = {
+      key: props?.pageData?.key,
+      value: e?.target?.id,
+    };
+    setFeedbackData((prevData) => {
+      return {
+        ...prevData,
+        [`page${currentPage}`]: currentPageData,
+      };
+    });
+
+    props.handleSubmit(currentPageData);
   };
 
   const ItemList = () => {
     const cardItems =
       props?.pageData?.options?.length > 0 ? props?.pageData?.options : [];
-    return cardItems?.map((items, index) => {
+    return cardItems?.map((items) => {
       let label = items?.label?.split("_")[5]?.split(":")[1];
       let isSelected =
-        selectedValue?.toLowerCase() == items?.value?.toLowerCase();
+        feedbackData?.[`page${currentPage}`]?.value === items?.value;
       return (
         <Box
           sx={{
@@ -63,7 +66,7 @@ export default function CardList(props) {
         >
           <Item
             elevation={2}
-            id={index + 1}
+            id={items?.value}
             className="radioGroupItems"
             sx={
               isSelected
