@@ -52,7 +52,7 @@ export default function CardList(props) {
     const cardItems =
       props?.pageData?.options?.length > 0 ? props?.pageData?.options : [];
     return cardItems?.map((items) => {
-      let label = items?.label?.split("_")[5]?.split(":")[1];
+      let label = items?.label;
       let isSelected =
         feedbackData?.[`page${currentPage}`]?.value === items?.value;
       return (

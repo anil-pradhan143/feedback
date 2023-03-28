@@ -31,7 +31,7 @@ const Feedback = () => {
     setFeedbackData,
     currentPage,
     setCurrentpage,
-    setFeedbackId
+    setFeedbackId,
   } = useContext(AppContext);
   const [cardType, setCardType] = useState(null);
 
@@ -44,7 +44,6 @@ const Feedback = () => {
     } else {
       PatchRequest(selectedKeys);
     }
-   
   }, []);
 
   const GetRequest = () => {
@@ -54,7 +53,7 @@ const Feedback = () => {
         if (data?.data === "Invalid or Expired QR code") {
           history.push("/404");
         } else {
-          setFeedbackId("641b5f43f160fd4e3a0d97ca");
+          setFeedbackId(data?.data?.feedbackId);
           setPageData(data?.data);
           CardType(data?.data);
         }
@@ -89,18 +88,7 @@ const Feedback = () => {
           CardType(data?.data);
         }
       })
-      .catch(() => {
-      //   setPageData({
-      //     key: "thankyou",
-      //     label: "Thank you for your feedback!",
-      //     next: "submit",
-      //   });
-      //   CardType({
-      //     key: "thankyou",
-      //     label: "Thank you for your feedback!",
-      //     next: "submit",
-      //   });
-      });
+      .catch(() => {});
   };
 
   const CardType = (responseData) => {
@@ -126,21 +114,20 @@ const Feedback = () => {
   };
 
   const getFooterButtons = () => {
-    let FooterButtons=[];
+    let FooterButtons = [];
     if (currentPage === 1 && !pageData?.useMultiSelect) {
       FooterButtons.push("Prev");
-    } else if (cardType==="form") {
+    } else if (cardType === "form") {
       FooterButtons.push("Submit");
-    } 
-    else if(cardType ==="thankyou"){
+    } else if (cardType === "thankyou") {
       FooterButtons.push("Go to CarsTaxi.ae");
-    }
-    else {
+    } else if (cardType === "card") {
+    } else {
       FooterButtons.push("Prev");
-      FooterButtons.push( "Next");
+      FooterButtons.push("Next");
     }
-    return FooterButtons
-  }
+    return FooterButtons;
+  };
 
   const handlePrev = () => {
     if (currentPage.toString() === "2") {
@@ -152,12 +139,9 @@ const Feedback = () => {
   };
 
   const handleClick = (clickEvent) => {
-    console.log("feedback", feedbackData);
-    if(cardType === "thankyou")
-    {
-        window.open("https://www.google.com","_self")
-    }
-    else if (clickEvent?.target?.textContent === "Prev") {
+    if (cardType === "thankyou") {
+      window.open(pageData?.redirect, "_self");
+    } else if (clickEvent?.target?.textContent === "Prev") {
       handlePrev();
     } else {
       handleNext(feedbackData?.[`page${currentPage}`]);
@@ -288,34 +272,29 @@ const Feedback = () => {
                         }}
                         id={items?.value}
                         label=""
-                        value={feedbackData?.[`page${currentPage}`]?.[items?.value] ?? formValues[items?.value]}
+                        value={
+                          feedbackData?.[`page${currentPage}`]?.[
+                            items?.value
+                          ] ?? formValues[items?.value]
+                        }
                         required={
                           pageData?.useOptionForm[index] >= 0 ? true : false
                         }
                         onChange={(event) => {
-                          formValues[items.value] = event.target.value;
                           setFeedbackData((prevData) => {
                             return {
                               ...prevData,
                               [`page${currentPage}`]: {
-                                  ...prevData?.[`page${currentPage}`],
-                                [items.value]:event.target.value},
-                            };
-                          });
-                        }}
-                        onBlur={(event) => {
-                          setFeedbackData((prevData) => {
-                            return {
-                              ...prevData,
-                              [`page${currentPage}`]: {
-                                  ...prevData?.[`page${currentPage}`],
-                                  ["key"]:pageData?.key,
-                                ["value"]:prevData?.[`page${currentPage}`]?.value !== undefined? prevData?.[`page${currentPage}`]?.value?.concat(","+event.target.value):event?.target?.value
+                                ...prevData?.[`page${currentPage}`],
+                                ["key"]: pageData?.key,
+                                ["value"]: {
+                                  ...prevData?.[`page${currentPage}`]?.value,
+                                  [items?.value]: event?.target?.value,
+                                },
                               },
                             };
                           });
                         }}
-
                         fullWidth
                       />
                     </Grid>
@@ -378,7 +357,7 @@ const Feedback = () => {
             <Typography
               sx={{
                 color: "#2D1F7A",
-                fontSize: "17px",
+                fontSize: "14px",
                 fontWeight: 600,
                 opacity: "70%",
                 mb: "50px",
@@ -388,8 +367,7 @@ const Feedback = () => {
             </Typography>
           </Box>
         )}
-        {
-         currentPage !== 1 && getFooterButtons().length > 0 && (
+        {currentPage !== 1 && getFooterButtons().length > 0 && (
           <Box onClick={(clickEvent) => handleClick(clickEvent)}>
             {getFooterButtons().map((button) => {
               let currrentButton = button?.toLowerCase();
