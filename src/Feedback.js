@@ -31,9 +31,7 @@ const Feedback = () => {
     setFeedbackData,
     currentPage,
     setCurrentpage,
-    setFeedbackId,
-    footerButtons,
-    setFooterButtons,
+    setFeedbackId
   } = useContext(AppContext);
   const [cardType, setCardType] = useState(null);
 
@@ -46,6 +44,7 @@ const Feedback = () => {
     } else {
       PatchRequest(selectedKeys);
     }
+   
   }, []);
 
   const GetRequest = () => {
@@ -91,17 +90,16 @@ const Feedback = () => {
         }
       })
       .catch(() => {
-        setFooterButtons(["Go to CarsTaxi.ae"]);
-        setPageData({
-          key: "thankyou",
-          label: "Thank you for your feedback!",
-          next: "submit",
-        });
-        CardType({
-          key: "thankyou",
-          label: "Thank you for your feedback!",
-          next: "submit",
-        });
+      //   setPageData({
+      //     key: "thankyou",
+      //     label: "Thank you for your feedback!",
+      //     next: "submit",
+      //   });
+      //   CardType({
+      //     key: "thankyou",
+      //     label: "Thank you for your feedback!",
+      //     next: "submit",
+      //   });
       });
   };
 
@@ -124,15 +122,25 @@ const Feedback = () => {
 
   const handleNext = (currentPageData) => {
     setCurrentpage(currentPage + 1);
-    if (currentPage === 1) {
-      setFooterButtons(["Prev"]);
-    } else if (currentPage === 8) {
-      setFooterButtons(["Submit"]);
-    } else {
-      setFooterButtons(["Prev", "Next"]);
-    }
     PatchRequest(currentPageData);
   };
+
+  const getFooterButtons = () => {
+    let FooterButtons=[];
+    if (currentPage === 1 && !pageData?.useMultiSelect) {
+      FooterButtons.push("Prev");
+    } else if (cardType==="form") {
+      FooterButtons.push("Submit");
+    } 
+    else if(cardType ==="thankyou"){
+      FooterButtons.push("Go to CarsTaxi.ae");
+    }
+    else {
+      FooterButtons.push("Prev");
+      FooterButtons.push( "Next");
+    }
+    return FooterButtons
+  }
 
   const handlePrev = () => {
     if (currentPage.toString() === "2") {
@@ -145,28 +153,20 @@ const Feedback = () => {
 
   const handleClick = (clickEvent) => {
     console.log("feedback", feedbackData);
-    if (clickEvent?.target?.textContent === "Prev") {
+    if(cardType === "thankyou")
+    {
+        window.open("https://www.google.com","_self")
+    }
+    else if (clickEvent?.target?.textContent === "Prev") {
       handlePrev();
     } else {
-      // let selectedValues = selectedItems.map((k) => k).join(",");
       handleNext(feedbackData?.[`page${currentPage}`]);
     }
   };
+
   const handleConfirmation = (label) => {
     handleNext(label);
   };
-
-  // const handleFormSubmit = (event) => {
-  //   event.preventDefault();
-  //   if (error) {
-  //     alert("error");
-  //     return false;
-  //   }
-  //   let selectedValues = Object.keys(formValues)
-  //     .map((k) => formValues[k])
-  //     .join(",");
-  //   handleNext(selectedValues, formValues);
-  // };
 
   const getCheckBoxState = (optionData) => {
     if (feedbackData[`page${currentPage}`]?.value) {
@@ -288,13 +288,34 @@ const Feedback = () => {
                         }}
                         id={items?.value}
                         label=""
-                        value={formValues[items?.value] ?? ""}
+                        value={feedbackData?.[`page${currentPage}`]?.[items?.value] ?? formValues[items?.value]}
                         required={
                           pageData?.useOptionForm[index] >= 0 ? true : false
                         }
-                        onBlur={(event) => {
+                        onChange={(event) => {
                           formValues[items.value] = event.target.value;
+                          setFeedbackData((prevData) => {
+                            return {
+                              ...prevData,
+                              [`page${currentPage}`]: {
+                                  ...prevData?.[`page${currentPage}`],
+                                [items.value]:event.target.value},
+                            };
+                          });
                         }}
+                        onBlur={(event) => {
+                          setFeedbackData((prevData) => {
+                            return {
+                              ...prevData,
+                              [`page${currentPage}`]: {
+                                  ...prevData?.[`page${currentPage}`],
+                                  ["key"]:pageData?.key,
+                                ["value"]:prevData?.[`page${currentPage}`]?.value !== undefined? prevData?.[`page${currentPage}`]?.value?.concat(","+event.target.value):event?.target?.value
+                              },
+                            };
+                          });
+                        }}
+
                         fullWidth
                       />
                     </Grid>
@@ -330,7 +351,11 @@ const Feedback = () => {
           <MultiSelectCardList
             handleNext={handleNext}
             handlePrev={handlePrev}
-            pageData={{ options: newArr, label: pageData?.label?.["EN"] }}
+            pageData={{
+              options: newArr,
+              label: pageData?.label,
+              key: pageData?.key,
+            }}
           />
         ) : null;
     }
@@ -363,9 +388,10 @@ const Feedback = () => {
             </Typography>
           </Box>
         )}
-        {currentPage !== 1 && footerButtons.length > 0 && (
+        {
+         currentPage !== 1 && getFooterButtons().length > 0 && (
           <Box onClick={(clickEvent) => handleClick(clickEvent)}>
-            {footerButtons.map((button) => {
+            {getFooterButtons().map((button) => {
               let currrentButton = button?.toLowerCase();
               return (
                 <Paper
@@ -382,7 +408,6 @@ const Feedback = () => {
                     minWidth: "80%",
                     background:
                       currrentButton === "prev" ? "#FFFFFF" : "#34248F",
-
                     border: "1px solid rgba(45, 31, 122, 0.66)",
                     borderRadius: "5px",
                     marginBottom: "12px",
@@ -409,7 +434,7 @@ const Feedback = () => {
         )}
         {currentPage === 1 && (
           <CtTaxiNumber>
-            <Typography>CT-3422</Typography>
+            <Typography>{pageData?.ctNum}</Typography>
           </CtTaxiNumber>
         )}
       </Box>
