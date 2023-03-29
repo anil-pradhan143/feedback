@@ -77,7 +77,7 @@ export default function CardList(props) {
             <Typography
               id={items?.value}
               sx={{
-                fontFamily: "roboto",
+                fontFamily: "Raleway",
                 fontSize: "14px",
                 fontWeight: isSelected ? 800 : 600,
                 lineHeight: "16px",
@@ -97,23 +97,28 @@ export default function CardList(props) {
 
   return (
     <Container className="multiSelectGroup">
-      <StyledBox>
-        <Typography
-          sx={{
-            fontSize: "14px",
-            fontWeight: 600,
-            lineHeight: "16px",
-            color: "#2D1F7A",
-            opacity: "66%",
-          }}
-        >
-          {HomePageMsg}
-        </Typography>
-      </StyledBox>
+      {currentPage === 1 && (
+        <StyledBox>
+          <Typography
+            sx={{
+              fontFamily: "Raleway",
+              fontSize: "14px",
+              fontWeight: 600,
+              lineHeight: "16px",
+              color: "#2D1F7A",
+              opacity: "66%",
+            }}
+          >
+            {HomePageMsg}
+          </Typography>
+        </StyledBox>
+      )}
       <StyledBox>
         <Typography
           variant="h5"
           sx={{
+            fontFamily: "georgia",
+            fontStyle: "normal",
             fontSize: "20px",
             color: "#2D1F7A",
             opacity: "90%",

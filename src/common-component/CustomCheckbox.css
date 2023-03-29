@@ -19,7 +19,7 @@
 }
 
 .round label:after {
-    border: 2px solid #fff;
+    border: 2px solid #D6D3E9;
     border-top: none;
     border-right: none;
     content: "";
@@ -28,19 +28,5 @@
     margin-bottom: 5px;
     transform: rotate(-45deg);
     width: 12px;
-    opacity: 1;
-}
-
-.round input[type="checkbox"] {
-    visibility: hidden;
-    width: 0;
-}
-
-.round input[type="checkbox"]:checked+label {
-    background-color: #362593;
-    border-color: #362593;
-}
-
-.round input[type="checkbox"]:checked+label:after {
     opacity: 1;
 }

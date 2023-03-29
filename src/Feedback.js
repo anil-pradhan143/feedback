@@ -88,7 +88,9 @@ const Feedback = () => {
           CardType(data?.data);
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.log("err", err);
+      });
   };
 
   const CardType = (responseData) => {
@@ -130,14 +132,10 @@ const Feedback = () => {
   };
 
   const handlePrev = () => {
-    if (currentPage.toString() === "2") {
+    if (currentPage <= 2) {
       GetRequest();
     } else {
-      const patchReqData = {
-        key:feedbackData?.[`page${currentPage - 2}`]?.key,
-        value:feedbackData?.[`page${currentPage - 1}`]?.value
-      }
-      PatchRequest(patchReqData);
+      PatchRequest(feedbackData?.[`page${currentPage - 2}`]);
     }
     setCurrentpage(currentPage - 1);
   };
@@ -158,7 +156,8 @@ const Feedback = () => {
 
   const getCheckBoxState = (optionData) => {
     if (feedbackData[`page${currentPage}`]?.value) {
-      const splittedArray = feedbackData[`page${currentPage}`]?.value.split(",");
+      const splittedArray =
+        feedbackData[`page${currentPage}`]?.value.split(",");
       let isIndexMatch = false;
       for (let i = 0; i < splittedArray?.length; i++) {
         if (splittedArray[i] === optionData?.label) isIndexMatch = true;
@@ -216,7 +215,7 @@ const Feedback = () => {
               <Typography
                 variant="h5"
                 sx={{
-                  fontFamily: "roboto",
+                  fontFamily: "georgia",
                   fontSize: "20px",
                   lineHeight: "26px",
                   fontWeight: 400,
@@ -239,7 +238,6 @@ const Feedback = () => {
                   value={feedbackData?.[`page${currentPage}`]?.value}
                   fullWidth
                   onChange={handleSuggetion}
-                  
                 />
               </Box>
             )}
@@ -252,6 +250,7 @@ const Feedback = () => {
               <Grid item xs={12}>
                 <Typography
                   sx={{
+                    fontFamily: "Raleway",
                     color: "#2D1F7A",
                     fontSize: "14px",
                     fontWeight: 600,
@@ -263,7 +262,13 @@ const Feedback = () => {
                 <Grid container justifyContent="center" spacing={2}>
                   {pageData?.options?.map((items, index) => (
                     <Grid key={items?.label} item xs={12}>
-                      <Typography sx={{ display: "flex", color: "#362593" }}>
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          color: "#362593",
+                          fontFamily: "Raleway",
+                        }}
+                      >
                         {items?.label}
                         {pageData?.useOptionForm[index] !== index &&
                           " (optional)"}
@@ -317,6 +322,7 @@ const Feedback = () => {
             <Typography
               variant="h5"
               sx={{
+                fontFamily: "georgia",
                 color: "#2D1F7A",
                 fontSize: "22px",
                 fontWeight: 400,
@@ -346,30 +352,33 @@ const Feedback = () => {
   return (
     <Box
       className="container"
-      sx={{ display: "flex", flexDirection: "column", height: "764px" }}
+      sx={{ display: "flex", flexDirection: "column", height: "800px" }}
     >
       <Box className="header" sx={currentPage === 1 ? {} : { pb: "50px" }}>
         <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
       </Box>
+
+      {currentPage === 2 && (
+        <Box>
+          <Typography
+            sx={{
+              fontFamily: "Raleway",
+              color: "#2D1F7A",
+              fontSize: "14px",
+              fontWeight: 600,
+              opacity: "70%",
+              mb: 4,
+            }}
+          >
+            {pageData?.message}
+          </Typography>
+        </Box>
+      )}
+
       <Box className="component" sx={{ flex: 1 }}>
         {PageComponent()}
       </Box>
       <Box className="footer">
-        {currentPage === 2 && (
-          <Box>
-            <Typography
-              sx={{
-                color: "#2D1F7A",
-                fontSize: "14px",
-                fontWeight: 600,
-                opacity: "70%",
-                mb: "50px",
-              }}
-            >
-              {pageData?.message}
-            </Typography>
-          </Box>
-        )}
         {currentPage !== 1 && getFooterButtons().length > 0 && (
           <Box onClick={(clickEvent) => handleClick(clickEvent)}>
             {getFooterButtons().map((button) => {
@@ -392,11 +401,11 @@ const Feedback = () => {
                     border: "1px solid rgba(45, 31, 122, 0.66)",
                     borderRadius: "5px",
                     marginBottom: "12px",
+                    cursor: "pointer",
                   }}
                 >
                   <Typography
                     sx={{
-                      fontFamily: "roboto",
                       fontSize: "14px",
                       fontWeight: 600,
                       lineHeight: "16px",

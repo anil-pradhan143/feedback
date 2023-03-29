@@ -23,11 +23,11 @@ const StyledCard = styled((props) => {
   gap: "10px",
   border: "4px solid #34248F",
   borderRadius: "10px",
-  minHeight: "764px",
+  minHeight: "800px",
   maxWidth: "400px",
   display: "flex",
   flexDirection: "column",
-  height: "100%",
+  height: "auto",
 }));
 
 const App = () => {

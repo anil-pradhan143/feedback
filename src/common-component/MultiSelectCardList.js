@@ -23,8 +23,11 @@ const Item = styled(Paper)(() => ({
 
 export default function MultiSelectCardList(props) {
   const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
-  const { setFeedbackData, currentPage, selectedItems } =
-    useContext(AppContext);
+  const {
+    setFeedbackData,
+    currentPage,
+    selectedItems = [],
+  } = useContext(AppContext);
   const [checked, setChecked] = useState([0]);
   const [freeText, setFreeText] = useState("");
 
@@ -48,9 +51,7 @@ export default function MultiSelectCardList(props) {
       let OtherInitialState = pageItemList[itemLength - 1].checked;
       for (let i = 0; i < itemLength; i++) {
         pageItemList[i].checked = false;
-        pageItemList[id - i]?.checked
-          ? selectedItems.push(label.toString().trim())
-          : selectedItems.splice(selectedItems.indexOf(label), 1);
+        selectedItems.splice(selectedItems.indexOf(label), 1);
       }
       pageItemList[itemLength - 1].checked = !OtherInitialState;
       pageItemList[id - 1]?.checked
@@ -58,6 +59,10 @@ export default function MultiSelectCardList(props) {
         : selectedItems.splice(selectedItems.indexOf(label), 1);
     } else {
       pageItemList[itemLength - 1].checked = false;
+      const index = selectedItems.indexOf("Others");
+      if (index > -1) {
+        selectedItems.splice(index, 1);
+      }
       pageItemList[id - 1].checked = !pageItemList[id - 1].checked;
       pageItemList[id - 1].checked
         ? selectedItems.push(label.toString().trim())
@@ -69,6 +74,7 @@ export default function MultiSelectCardList(props) {
       value: selectedItems.map((k) => k).join(","),
       extraParams: freeText,
     };
+
     setFeedbackData((prevData) => {
       return {
         ...prevData,
@@ -109,9 +115,13 @@ export default function MultiSelectCardList(props) {
                   style={
                     items?.checked
                       ? { backgroundColor: "#362593" }
-                      : { backgroundColor: "#fff" }
+                      : {
+                          backgroundColor: "#D6D3E9",
+                          border: 0,
+                          content: "none",
+                        }
                   }
-                ></label>
+                />
               </div>
             </Box>
 
@@ -120,9 +130,9 @@ export default function MultiSelectCardList(props) {
                 className="multiSelect-label"
                 id={items?.value}
                 sx={{
-                  fontFamily: "roboto",
+                  fontFamily: "Raleway",
                   fontSize: "14px",
-                  fontWeight: items?.checked ? 800 : 600,
+                  fontWeight: items?.checked ? 700 : 600,
                   lineHeight: "16px",
                   color: items?.checked ? "#362593" : "#2D1F7A",
                   opacity: items?.checked ? "100%" : "70%",
@@ -164,6 +174,8 @@ export default function MultiSelectCardList(props) {
         <Typography
           variant="h5"
           sx={{
+            fontFamily: "georgia",
+            fontStyle: "normal",
             fontSize: "20px",
             color: "#2D1F7A",
             opacity: "90%",
@@ -177,6 +189,7 @@ export default function MultiSelectCardList(props) {
       <Box sx={{ alignSelf: "flex-start", p: "5px", mt: "5px" }}>
         <Typography
           sx={{
+            fontFamily: "Raleway",
             fontSize: "14px",
             color: "#2D1F7A",
             opacity: "90%",
