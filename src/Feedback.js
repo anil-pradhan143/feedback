@@ -92,7 +92,7 @@ const Feedback = () => {
   };
 
   const CardType = (responseData) => {
-    let responseDataKey = responseData?.key?.toLowerCase();
+    const responseDataKey = responseData?.key?.toLowerCase();
     if (responseDataKey === "contact") {
       setCardType("form");
     } else if (responseDataKey === "thankyou") {
@@ -133,7 +133,11 @@ const Feedback = () => {
     if (currentPage.toString() === "2") {
       GetRequest();
     } else {
-      PatchRequest(feedbackData?.[`page${currentPage - 1}`]);
+      const patchReqData = {
+        key:feedbackData?.[`page${currentPage - 2}`]?.key,
+        value:feedbackData?.[`page${currentPage - 1}`]?.value
+      }
+      PatchRequest(patchReqData);
     }
     setCurrentpage(currentPage - 1);
   };
@@ -154,7 +158,7 @@ const Feedback = () => {
 
   const getCheckBoxState = (optionData) => {
     if (feedbackData[`page${currentPage}`]?.value) {
-      let splittedArray = feedbackData[`page${currentPage}`]?.value.split(",");
+      const splittedArray = feedbackData[`page${currentPage}`]?.value.split(",");
       let isIndexMatch = false;
       for (let i = 0; i < splittedArray?.length; i++) {
         if (splittedArray[i] === optionData?.label) isIndexMatch = true;
@@ -166,7 +170,7 @@ const Feedback = () => {
   };
 
   const handleSuggetion = (suggestionEvent) => {
-    let currentPageData = {
+    const currentPageData = {
       key: pageData?.key,
       value: suggestionEvent?.target?.value,
     };
@@ -179,10 +183,10 @@ const Feedback = () => {
   };
 
   const PageComponent = () => {
-    let newArr = pageData?.options;
-    if (cardType === "list" && newArr?.length > 0) {
-      for (let i = 0; i < newArr?.length; i++) {
-        newArr[i].checked = getCheckBoxState(newArr[i]);
+    let pageItemList = pageData?.options;
+    if (cardType === "list" && pageItemList?.length > 0) {
+      for (let i = 0; i < pageItemList?.length; i++) {
+        pageItemList[i].checked = getCheckBoxState(pageItemList[i]);
       }
     }
 
@@ -195,7 +199,7 @@ const Feedback = () => {
             handleNext={handleNext}
             handlePrev={handlePrev}
             pageData={{
-              options: newArr,
+              options: pageItemList,
               label: pageData?.label,
               key: pageData?.key,
             }}
@@ -234,9 +238,8 @@ const Feedback = () => {
                   rows={4}
                   value={feedbackData?.[`page${currentPage}`]?.value}
                   fullWidth
-                  onChange={(suggestionEvent) =>
-                    handleSuggetion(suggestionEvent)
-                  }
+                  onChange={handleSuggetion}
+                  
                 />
               </Box>
             )}
@@ -331,7 +334,7 @@ const Feedback = () => {
             handleNext={handleNext}
             handlePrev={handlePrev}
             pageData={{
-              options: newArr,
+              options: pageItemList,
               label: pageData?.label,
               key: pageData?.key,
             }}
@@ -370,7 +373,7 @@ const Feedback = () => {
         {currentPage !== 1 && getFooterButtons().length > 0 && (
           <Box onClick={(clickEvent) => handleClick(clickEvent)}>
             {getFooterButtons().map((button) => {
-              let currrentButton = button?.toLowerCase();
+              const currrentButton = button?.toLowerCase();
               return (
                 <Paper
                   elevation={2}

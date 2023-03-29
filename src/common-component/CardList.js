@@ -34,7 +34,7 @@ export default function CardList(props) {
 
   const handleClick = (e) => {
     e.preventDefault();
-    let currentPageData = {
+    const currentPageData = {
       key: props?.pageData?.key,
       value: e?.target?.id,
     };
@@ -52,8 +52,8 @@ export default function CardList(props) {
     const cardItems =
       props?.pageData?.options?.length > 0 ? props?.pageData?.options : [];
     return cardItems?.map((items) => {
-      let label = items?.label;
-      let isSelected =
+      const label = items?.label;
+      const isSelected =
         feedbackData?.[`page${currentPage}`]?.value === items?.value;
       return (
         <Box

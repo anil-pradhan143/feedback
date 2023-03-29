@@ -42,24 +42,24 @@ export default function MultiSelectCardList(props) {
   };
 
   const handleOnChange = (itemLength, id, label) => {
-    let newArr = [...checkBoxState];
+    let pageItemList = [...checkBoxState];
 
     if (label?.toLowerCase() === "others") {
-      let OtherInitialState = newArr[itemLength - 1].checked;
-      for (var i = 0; i < itemLength; i++) {
-        newArr[i].checked = false;
-        newArr[id - i]?.checked
+      let OtherInitialState = pageItemList[itemLength - 1].checked;
+      for (let i = 0; i < itemLength; i++) {
+        pageItemList[i].checked = false;
+        pageItemList[id - i]?.checked
           ? selectedItems.push(label.toString().trim())
           : selectedItems.splice(selectedItems.indexOf(label), 1);
       }
-      newArr[itemLength - 1].checked = !OtherInitialState;
-      newArr[id - 1]?.checked
+      pageItemList[itemLength - 1].checked = !OtherInitialState;
+      pageItemList[id - 1]?.checked
         ? selectedItems.push(label.toString().trim())
         : selectedItems.splice(selectedItems.indexOf(label), 1);
     } else {
-      newArr[itemLength - 1].checked = false;
-      newArr[id - 1].checked = !newArr[id - 1].checked;
-      newArr[id - 1].checked
+      pageItemList[itemLength - 1].checked = false;
+      pageItemList[id - 1].checked = !pageItemList[id - 1].checked;
+      pageItemList[id - 1].checked
         ? selectedItems.push(label.toString().trim())
         : selectedItems.splice(selectedItems.indexOf(label), 1);
     }
@@ -75,7 +75,7 @@ export default function MultiSelectCardList(props) {
         [`page${currentPage}`]: currentPageData,
       };
     });
-    setCheckboxState(newArr);
+    setCheckboxState(pageItemList);
   };
 
   const ItemList = () => {
