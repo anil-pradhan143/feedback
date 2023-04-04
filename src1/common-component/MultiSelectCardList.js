@@ -23,21 +23,56 @@ const Item = styled(Paper)(() => ({
 
 export default function MultiSelectCardList(props) {
   const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
-  const [selectedItems, setSelectedItems] = useState(props?.selectedItemList);
-  const { feedbackData, setFeedbackData, currentPage } = useContext(AppContext);
+  const {
+    setFeedbackData,
+    currentPage,
+    selectedItems = [],
+  } = useContext(AppContext);
+  const [checked, setChecked] = useState([0]);
+  const [freeText, setFreeText] = useState("");
 
-  const handleOnChange = (id, label) => {
+  const handleToggle = (event, value) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  };
+
+  const handleOnChange = (itemLength, id, label) => {
     let pageItemList = [...checkBoxState];
 
-    pageItemList[id - 1].checked = !pageItemList[id - 1].checked;
-    pageItemList[id - 1].checked
-      ? selectedItems.push(label.toString().trim())
-      : selectedItems.splice(selectedItems.indexOf(label), 1);
+    if (label?.toLowerCase() === "others") {
+      let OtherInitialState = pageItemList[itemLength - 1].checked;
+      for (let i = 0; i < itemLength; i++) {
+        pageItemList[i].checked = false;
+        selectedItems.splice(selectedItems.indexOf(label), 1);
+      }
+      pageItemList[itemLength - 1].checked = !OtherInitialState;
+      pageItemList[id - 1]?.checked
+        ? selectedItems.push(label.toString().trim())
+        : selectedItems.splice(selectedItems.indexOf(label), 1);
+    } else {
+      pageItemList[itemLength - 1].checked = false;
+      const index = selectedItems.indexOf("Others");
+      if (index > -1) {
+        selectedItems.splice(index, 1);
+      }
+      pageItemList[id - 1].checked = !pageItemList[id - 1].checked;
+      pageItemList[id - 1].checked
+        ? selectedItems.push(label.toString().trim())
+        : selectedItems.splice(selectedItems.indexOf(label), 1);
+    }
 
     let currentPageData = {
       key: props?.pageData?.key,
       value: selectedItems.map((k) => k).join(","),
-      extraParams: feedbackData[`page${currentPage}`]?.extraParams ?? "",
+      extraParams: freeText,
     };
 
     setFeedbackData((prevData) => {
@@ -53,18 +88,20 @@ export default function MultiSelectCardList(props) {
     return checkBoxState?.map((items, index) => {
       return (
         <Box
-          key={index}
           sx={{
             cursor: "pointer",
             width: "100%",
           }}
-          onClick={() => handleOnChange(index + 1, items?.value)}
+          onClick={() =>
+            handleOnChange(checkBoxState?.length, index + 1, items?.value)
+          }
           id={`itemBox${index}`}
         >
           <Item
             elevation={2}
             id={index + 1}
             className="radioGroupItems"
+            onClick={(event) => handleToggle(event, index)}
             sx={
               items?.checked
                 ? { border: "2px solid #362593", background: "#D6D3E9" }
@@ -108,29 +145,12 @@ export default function MultiSelectCardList(props) {
               {items?.value?.toLowerCase()?.trim() === "others" &&
                 items?.checked && (
                   <TextField
-                    sx={{
-                      backgroundColor: "#fff",
-                      borderRadius: "10px",
-                      mt: 1,
-                    }}
+                    sx={{ backgroundColor: "#fff" }}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
-                    defaultValue={
-                      feedbackData?.[`page${currentPage}`]?.extraParams ?? ""
-                    }
-                    onBlur={(e) =>
-                      setFeedbackData((prevData) => {
-                        return {
-                          ...prevData,
-                          [`page${currentPage}`]: {
-                            ...prevData?.[`page${currentPage}`],
-                            extraParams: e.target.value,
-                          },
-                        };
-                      })
-                    }
+                    onChange={(e) => setFreeText(e?.target?.value)}
                   ></TextField>
                 )}
             </Box>

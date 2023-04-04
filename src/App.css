@@ -1,9 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap');
 
-* {
-  padding: 0px;
-  margin: 0px;
-}
+
 
 body {
   background: linear-gradient(0deg, rgba(52, 36, 143, 0.2), rgba(52, 36, 143, 0.2)), #FFFFFF;
@@ -12,5 +9,35 @@ body {
   padding: 20px 0px;
 }
 
+.textStyleFieldLabel {
+  color:'red'
+}
 
+.subTitleTextStyle {
+font-family: "Raleway";
+color: #2D1F7A;
+font-size: 14px;
+font-weight: 600;
+opacity: 70%;
+padding-bottom: 20px;
+}
 /* Next button css end here */
+
+/* arrow button css start here */
+.arrow {
+  display: inline-block;
+  padding: 3px;
+  height:8px;
+  width:8px
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+/* arrow button css end here */

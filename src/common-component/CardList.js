@@ -23,6 +23,8 @@ const Item = styled(Paper)(() => ({
   background: "#F2F2F2",
   border: "1px solid rgba(45, 31, 122, 0.66)",
   borderRadius: "5px",
+  minHeight: "48px",
+  boxShadow: "none",
 }));
 
 const StyledBox = styled(Box)(() => ({
@@ -48,51 +50,103 @@ export default function CardList(props) {
     props.handleSubmit(currentPageData);
   };
 
+  const getCSS = (value) => {
+    let cssProperties = {};
+    switch (value?.toLowerCase()) {
+      case "excellent":
+        cssProperties = {
+          background:
+            "linear-gradient(0deg, rgba(22, 163, 74, 0.2), rgba(22, 163, 74, 0.2)), #F2F2F2",
+          border: "1px solid #16A34A",
+          borderRadius: "5px",
+          color: "#16A34A",
+        };
+        break;
+      case "very good":
+        cssProperties = {
+          background:
+            "linear-gradient(0deg, rgba(22, 163, 74, 0.05), rgba(22, 163, 74, 0.05)), rgba(242, 242, 242, 0.5)",
+          border: "1px solid #16A34A",
+          borderRadius: "5px",
+          color: "#16A34A",
+        };
+        break;
+      case "good":
+        cssProperties = {
+          background: "rgba(242, 242, 242, 0.66)",
+          border: "1px solid rgba(45, 31, 122, 0.66)",
+          borderRadius: "5px",
+          color: "rgba(45, 31, 122, 0.66)",
+        };
+        break;
+      case "satisfactory":
+        cssProperties = {
+          background:
+            "linear-gradient(0deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.05)), rgba(242, 242, 242, 0.25)",
+          border: "1px solid rgba(220, 38, 38, 0.66)",
+          borderRadius: "5px",
+          color: "rgba(220, 38, 38, 0.66)",
+        };
+        break;
+      case "bad":
+        cssProperties = {
+          background:
+            "linear-gradient(0deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.2)), rgba(242, 242, 242, 0.5)",
+          border: "1px solid rgba(220, 38, 38, 0.66)",
+          borderRadius: "5px",
+          color: "rgba(220, 38, 38, 0.66)",
+        };
+        break;
+    }
+    return cssProperties;
+  };
   const ItemList = () => {
     const cardItems =
-      props?.pageData?.options?.length > 0 ? props?.pageData?.options : [];
-    return cardItems?.map((items) => {
-      const label = items?.label;
-      const isSelected =
-        feedbackData?.[`page${currentPage}`]?.value === items?.value;
-      return (
-        <Box
-          sx={{
-            cursor: "pointer",
-            width: "100%",
-            marginBottom: "24px",
-          }}
-          onClick={(e) => handleClick(e)}
-        >
-          <Item
-            elevation={2}
-            id={items?.value}
-            className="radioGroupItems"
-            sx={
-              isSelected
-                ? { border: "2px solid #362593", background: "#D6D3E9" }
-                : {}
-            }
+      props?.pageData?.options?.length > 0 ? props.pageData.options : [];
+    return cardItems
+      .map((items, index) => {
+        const label = items?.label;
+        const isSelected =
+          feedbackData?.[`page${currentPage}`]?.value === items?.value;
+        return (
+          <Box
+            key={index}
+            sx={{
+              cursor: "pointer",
+              width: "100%",
+              marginBottom: "24px",
+            }}
+            onClick={(e) => handleClick(e)}
           >
-            <Typography
+            <Item
+              elevation={2}
               id={items?.value}
-              sx={{
-                fontFamily: "Raleway",
-                fontSize: "14px",
-                fontWeight: isSelected ? 800 : 600,
-                lineHeight: "16px",
-                color: isSelected ? "#362593" : "#2D1F7A",
-                opacity: isSelected ? "100%" : "70%",
-                textDecoration: "none",
-                textTransform: "capitalize",
-              }}
+              className="radioGroupItems"
+              sx={
+                isSelected
+                  ? { border: "2px solid #362593", background: "#D6D3E9" }
+                  : getCSS(label)
+              }
             >
-              {label}
-            </Typography>
-          </Item>
-        </Box>
-      );
-    });
+              <Typography
+                id={items?.value}
+                sx={{
+                  fontFamily: "Raleway",
+                  fontSize: "14px",
+                  fontWeight: isSelected ? 800 : 600,
+                  lineHeight: "16px",
+                  color: isSelected ? "#362593" : "",
+                  textDecoration: "none",
+                  textTransform: "capitalize",
+                }}
+              >
+                {label}
+              </Typography>
+            </Item>
+          </Box>
+        );
+      })
+      .reverse();
   };
 
   return (

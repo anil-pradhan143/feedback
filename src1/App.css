@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap');
+
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+body {
+  background: linear-gradient(0deg, rgba(52, 36, 143, 0.2), rgba(52, 36, 143, 0.2)), #FFFFFF;
+  font-family: 'Raleway';
+  font-style: normal;
+  padding: 20px 0px;
+}
+
+
+/* Next button css end here */

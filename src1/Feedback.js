@@ -11,10 +11,6 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { baseUrl } from "./Constants";
 import CarTaxi from "./assets/cars-taxi.png";
-import ThanksForFeedback from "./assets/thanks.png";
-import { FieldMapper } from "./common-component";
-import { useForm } from "react-hook-form";
-import "./App.css";
 
 const CtTaxiNumber = styled(Box)(() => ({
   color: "#2D1F7A",
@@ -26,14 +22,6 @@ const CtTaxiNumber = styled(Box)(() => ({
 const Feedback = () => {
   const history = useHistory();
   const { search } = useLocation();
-  const {
-    register,
-    setError,
-    formState: { errors, isValid },
-    handleSubmit,
-    clearErrors,
-    control,
-  } = useForm({ mode: "onChange" });
   const {
     selectedKeys,
     pageData,
@@ -113,6 +101,8 @@ const Feedback = () => {
       setCardType(responseDataKey);
     } else if (responseData?.useMultiSelect) {
       setCardType("list");
+    } else if (responseDataKey === "8") {
+      setCardType("address");
     } else if (responseData?.useFreeText) {
       setCardType("suggetion");
     } else {
@@ -127,17 +117,16 @@ const Feedback = () => {
 
   const getFooterButtons = () => {
     let FooterButtons = [];
-    if (cardType === "form") {
+    if (currentPage === 1 && !pageData?.useMultiSelect) {
+      FooterButtons.push("Prev");
+    } else if (cardType === "form") {
       FooterButtons.push("Submit");
     } else if (cardType === "thankyou") {
       FooterButtons.push("Go to CarsTaxi.ae");
-    } else if (
-      feedbackData?.[`page${currentPage}`]?.value ||
-      cardType === "suggetion"
-    ) {
-      FooterButtons.push("Next");
+    } else if (cardType === "card") {
     } else {
       FooterButtons.push("Prev");
+      FooterButtons.push("Next");
     }
     return FooterButtons;
   };
@@ -151,52 +140,24 @@ const Feedback = () => {
     setCurrentpage(currentPage - 1);
   };
 
-  const formOnChangeHandler = (name, value = "") => {
-    setFeedbackData((prevData) => {
-      return {
-        ...prevData,
-        [`page${currentPage}`]: {
-          ...prevData?.[`page${currentPage}`],
-          key: pageData?.key,
-          [name]: value,
-        },
-      };
-    });
-  };
-
-  const onFormSubmitHandler = (data) => {
-    if (isValid) {
-      handleNext(feedbackData?.[`page${currentPage}`]);
-    }
-  };
-
   const handleClick = (clickEvent) => {
     if (cardType === "thankyou") {
       window.open(pageData?.redirect, "_self");
     } else if (clickEvent?.target?.textContent === "Prev") {
       handlePrev();
-    } else if (cardType === "suggetion") {
-      const currentPageData = {
-        key: pageData?.key,
-        value: feedbackData?.[`page${currentPage}`]?.value ?? "",
-      };
-      setFeedbackData((prevData) => {
-        return {
-          ...prevData,
-          [`page${currentPage}`]: currentPageData,
-        };
-      });
-      handleNext(currentPageData);
-    } else if (cardType === "form") {
-      handleSubmit(onFormSubmitHandler)();
     } else {
       handleNext(feedbackData?.[`page${currentPage}`]);
     }
   };
 
+  const handleConfirmation = (label) => {
+    handleNext(label);
+  };
+
   const getCheckBoxState = (optionData) => {
     if (feedbackData[`page${currentPage}`]?.value) {
-      const splittedArray = feedbackData[`page${currentPage}`].value.split(",");
+      const splittedArray =
+        feedbackData[`page${currentPage}`]?.value.split(",");
       let isIndexMatch = false;
       for (let i = 0; i < splittedArray?.length; i++) {
         if (splittedArray[i] === optionData?.label) isIndexMatch = true;
@@ -210,7 +171,7 @@ const Feedback = () => {
   const handleSuggetion = (suggestionEvent) => {
     const currentPageData = {
       key: pageData?.key,
-      value: suggestionEvent?.target?.value ?? "",
+      value: suggestionEvent?.target?.value,
     };
     setFeedbackData((prevData) => {
       return {
@@ -241,13 +202,12 @@ const Feedback = () => {
               label: pageData?.label,
               key: pageData?.key,
             }}
-            selectedItemList={
-              feedbackData[`page${currentPage}`]?.value
-                ? feedbackData[`page${currentPage}`]?.value.split(",")
-                : []
-            }
           />
         ) : null;
+      case "address":
+        return (
+          <HomeCard handleSubmit={handleConfirmation} pageData={pageData} />
+        );
       case "suggetion":
         return (
           <Box>
@@ -275,7 +235,7 @@ const Feedback = () => {
                   label=""
                   multiline
                   rows={4}
-                  value={feedbackData?.[`page${currentPage}`]?.value ?? ""}
+                  value={feedbackData?.[`page${currentPage}`]?.value}
                   fullWidth
                   onChange={handleSuggetion}
                 />
@@ -284,27 +244,70 @@ const Feedback = () => {
           </Box>
         );
       case "form":
-        const { options, useOptionForm } = pageData || [];
         return (
           <form>
             <Grid sx={{ flexGrow: 1, mt: 2 }} container spacing={2}>
               <Grid item xs={12}>
-                <Typography className="subTitleTextStyle">
+                <Typography
+                  sx={{
+                    fontFamily: "Raleway",
+                    color: "#2D1F7A",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    opacity: "70%",
+                  }}
+                >
                   {pageData?.label}
                 </Typography>
-                <FieldMapper
-                  fieldsFormData={feedbackData}
-                  currentPage={currentPage}
-                  mandatoryArrayIndex={useOptionForm}
-                  fieldSet={options}
-                  defaultValues={formValues}
-                  register={register}
-                  setError={setError}
-                  onChange={formOnChangeHandler}
-                  clearErrors={clearErrors}
-                  errors={errors}
-                  control={control}
-                />
+                <Grid container justifyContent="center" spacing={2}>
+                  {pageData?.options?.map((items, index) => (
+                    <Grid key={items?.label} item xs={12}>
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          color: "#362593",
+                          fontFamily: "Raleway",
+                        }}
+                      >
+                        {items?.label}
+                        {pageData?.useOptionForm[index] !== index &&
+                          " (optional)"}
+                      </Typography>
+                      <TextField
+                        sx={{
+                          border: "1px solid #2D1F7A",
+                          borderRadius: "10px",
+                        }}
+                        id={items?.value}
+                        label=""
+                        value={
+                          feedbackData?.[`page${currentPage}`]?.[
+                            items?.value
+                          ] ?? formValues[items?.value]
+                        }
+                        required={
+                          pageData?.useOptionForm[index] >= 0 ? true : false
+                        }
+                        onChange={(event) => {
+                          setFeedbackData((prevData) => {
+                            return {
+                              ...prevData,
+                              [`page${currentPage}`]: {
+                                ...prevData?.[`page${currentPage}`],
+                                ["key"]: pageData?.key,
+                                ["value"]: {
+                                  ...prevData?.[`page${currentPage}`]?.value,
+                                  [items?.value]: event?.target?.value,
+                                },
+                              },
+                            };
+                          });
+                        }}
+                        fullWidth
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
             </Grid>
           </form>
@@ -329,9 +332,6 @@ const Feedback = () => {
             >
               {pageData?.label}
             </Typography>
-            <Box sx={{ pb: "50px" }}>
-              <img src={ThanksForFeedback} alt="Car Taxi" loading="lazy" />
-            </Box>
           </Box>
         );
       default:
@@ -344,11 +344,6 @@ const Feedback = () => {
               label: pageData?.label,
               key: pageData?.key,
             }}
-            selectedItemList={
-              feedbackData[`page${currentPage}`]?.value
-                ? feedbackData[`page${currentPage}`]?.value.split(",")
-                : []
-            }
           />
         ) : null;
     }
@@ -386,14 +381,12 @@ const Feedback = () => {
       <Box className="footer">
         {currentPage !== 1 && getFooterButtons().length > 0 && (
           <Box onClick={(clickEvent) => handleClick(clickEvent)}>
-            {getFooterButtons().map((button, index) => {
+            {getFooterButtons().map((button) => {
               const currrentButton = button?.toLowerCase();
-              return currrentButton === "submit" ? (
+              return (
                 <Paper
-                  key={index}
                   elevation={2}
                   id={button}
-                  type={"submit"}
                   className="radioGroupItems"
                   sx={{
                     padding: "10px 20px",
@@ -425,77 +418,6 @@ const Feedback = () => {
                     {button}
                   </Typography>
                 </Paper>
-              ) : (
-                <Box sx={{ display: "flex", p: 1 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexGrow: 0,
-                      textAlign: "center",
-                    }}
-                  >
-                    <i
-                      class="arrow left"
-                      style={{
-                        border: "solid #D6D3E9",
-                        borderWidth: "0px 3px 3px 0px",
-                      }}
-                    ></i>
-                    <Typography
-                      sx={{
-                        paddingLeft: "10px",
-                        fontSize: "14px",
-                        fontWeight: 800,
-                        fontFamily: "Raleway",
-                        color: "#D6D3E9",
-                      }}
-                    >
-                      Prev
-                    </Typography>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexGrow: 8,
-                      textAlign: "center",
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexGrow: 0,
-                      textAlign: "center",
-                    }}
-                    aria-disabled={currrentButton === "next"}
-                  >
-                    <Typography
-                      sx={{
-                        paddingRight: "10px",
-                        fontFamily: "Raleway",
-                        fontSize: "14px",
-                        fontWeight: 800,
-                        color:
-                          currrentButton === "next" ? "#34248F" : "#D6D3E9",
-                      }}
-                    >
-                      Next
-                    </Typography>
-                    <i
-                      class="arrow right"
-                      style={{
-                        borderColor:
-                          currrentButton === "next" ? "#34248F" : "#D6D3E9",
-                        borderStyle: "solid",
-                        borderWidth: "0px 3px 3px 0px",
-                      }}
-                    ></i>
-                  </div>
-                </Box>
               );
             })}
           </Box>

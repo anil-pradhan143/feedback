@@ -1,0 +1,48 @@
+.textStyleFieldLabel {
+  display: flex;
+  color: #362593;
+  font-family: "Raleway";
+}
+
+.textStyleInputField {
+  border: 1px solid #2d1f7a !important;
+  border-radius: 10px;
+}
+
+.errorTextStyle {
+  display: flex;
+  color: red;
+  font-family: "Raleway";
+}
+
+.PhoneInputInput:focus {
+  border-width: 0;
+  outline: 0;
+}
+
+.PhoneInputInput {
+  background-color: transparent;
+  border-color: white !important;
+  border-width: 0;
+  height: 50px;
+  font-size: 16px;
+  padding-left: 5px;
+}
+
+.PhoneInputCountryIcon {
+  height: 25px;
+}
+
+.form-country-input-wrapper {
+  border-style: solid;
+  border: 1px solid #2d1f7a !important;
+  border-radius: 10px;
+  padding-left: 15px;
+  padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.pt-3 {
+  padding-top: 15px;
+}
