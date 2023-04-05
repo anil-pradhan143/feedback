@@ -52,53 +52,53 @@ export default function CardList(props) {
 
   const getCSS = (value) => {
     let cssProperties = {};
-    let cssObject = JSON.parse(value?.split('|')[1]);
-    let label = value?.split('|')[0];
-    switch (label?.toLowerCase()?.trim()) {
-      case "excellent":
-        cssProperties = {
-          background:
-          cssObject?.background,
-          border: "1px solid #16A34A",
-          borderRadius: "5px",
-          color:cssObject?.color,
-        };
-        break;
-      case "very good":
-        cssProperties = {
-          background:
-          cssObject?.background,
-          border: "1px solid #16A34A",
-          borderRadius: "5px",
-          color: cssObject?.color,
-        };
-        break;
-      case "good":
-        cssProperties = {
-          background: cssObject?.background,
-          border: "1px solid rgba(45, 31, 122, 0.66)",
-          borderRadius: "5px",
-          color: cssObject?.color,
-        };
-        break;
-      case "satisfactory":
-        cssProperties = {
-          background:
-          cssObject?.background,
-          border: "1px solid rgba(220, 38, 38, 0.66)",
-          borderRadius: "5px",
-          color:cssObject?.color,
-        };
-        break;
-      case "bad":
-        cssProperties = {
-          background:
-          cssObject?.background,
-          border: "1px solid rgba(220, 38, 38, 0.66)",
-          borderRadius: "5px",
-          color:cssObject?.color,
-        };
-        break;
+    let cssObject;
+    let label = "";
+    if (value.includes("|")) {
+      cssObject = JSON.parse(value?.split("|")[1]);
+      label = value?.split("|")[0];
+      switch (label?.toLowerCase()?.trim()) {
+        case "excellent":
+          cssProperties = {
+            background: cssObject?.background,
+            border: "1px solid #16A34A",
+            borderRadius: "5px",
+            color: cssObject?.color,
+          };
+          break;
+        case "very good":
+          cssProperties = {
+            background: cssObject?.background,
+            border: "1px solid #16A34A",
+            borderRadius: "5px",
+            color: cssObject?.color,
+          };
+          break;
+        case "good":
+          cssProperties = {
+            background: cssObject?.background,
+            border: "1px solid rgba(45, 31, 122, 0.66)",
+            borderRadius: "5px",
+            color: cssObject?.color,
+          };
+          break;
+        case "satisfactory":
+          cssProperties = {
+            background: cssObject?.background,
+            border: "1px solid rgba(220, 38, 38, 0.66)",
+            borderRadius: "5px",
+            color: cssObject?.color,
+          };
+          break;
+        case "bad":
+          cssProperties = {
+            background: cssObject?.background,
+            border: "1px solid rgba(220, 38, 38, 0.66)",
+            borderRadius: "5px",
+            color: cssObject?.color,
+          };
+          break;
+      }
     }
     return cssProperties;
   };
@@ -143,7 +143,7 @@ export default function CardList(props) {
                   textTransform: "capitalize",
                 }}
               >
-                {label?.split('|')[0]}
+                {label?.split("|")[0]}
               </Typography>
             </Item>
           </Box>

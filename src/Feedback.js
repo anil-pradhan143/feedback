@@ -24,8 +24,10 @@ const CtTaxiNumber = styled(Box)(() => ({
 }));
 
 const Feedback = () => {
+  //state variables
   const history = useHistory();
   const { search } = useLocation();
+  const [cardType, setCardType] = useState(null);
   const {
     register,
     setError,
@@ -34,6 +36,8 @@ const Feedback = () => {
     clearErrors,
     control,
   } = useForm({ mode: "onChange" });
+
+  //context variables
   const {
     selectedKeys,
     pageData,
@@ -45,7 +49,6 @@ const Feedback = () => {
     setCurrentpage,
     setFeedbackId,
   } = useContext(AppContext);
-  const [cardType, setCardType] = useState(null);
 
   let formValues = {};
 
@@ -104,7 +107,7 @@ const Feedback = () => {
         console.log("err", err);
       });
   };
-
+  //this function handles the card type of the compenent to be rendered
   const CardType = (responseData) => {
     const responseDataKey = responseData?.key?.toLowerCase();
     if (responseDataKey === "contact") {
@@ -120,11 +123,7 @@ const Feedback = () => {
     }
   };
 
-  const handleNext = (currentPageData) => {
-    setCurrentpage(currentPage + 1);
-    PatchRequest(currentPageData);
-  };
-
+  // this function handles footer button logic
   const getFooterButtons = () => {
     let FooterButtons = [];
     if (cardType === "form") {
@@ -135,22 +134,34 @@ const Feedback = () => {
       feedbackData?.[`page${currentPage}`]?.value ||
       cardType === "suggetion"
     ) {
-      FooterButtons.push("Next");
+      if (
+        feedbackData?.[`page${currentPage}`]?.value?.toLowerCase() ===
+          "others" &&
+        !feedbackData?.[`page${currentPage}`]?.extraParams
+      ) {
+        FooterButtons.push("Prev");
+      } else {
+        FooterButtons.push("Next");
+      }
     } else {
       FooterButtons.push("Prev");
     }
     return FooterButtons;
   };
-
-  const handlePrev = () => {
-    if (currentPage <= 2) {
-      GetRequest();
+  //this function maintain the checkbox state as checked or unchecked state
+  const getCheckBoxState = (optionData) => {
+    if (feedbackData[`page${currentPage}`]?.value) {
+      const splittedArray = feedbackData[`page${currentPage}`].value.split(",");
+      let isIndexMatch = false;
+      for (let i = 0; i < splittedArray?.length; i++) {
+        if (splittedArray[i] === optionData?.label) isIndexMatch = true;
+      }
+      return isIndexMatch;
     } else {
-      PatchRequest(feedbackData?.[`page${currentPage - 2}`]);
+      return false;
     }
-    setCurrentpage(currentPage - 1);
   };
-
+  // this is the form chnage handler
   const formOnChangeHandler = (name, value = "") => {
     setFeedbackData((prevData) => {
       return {
@@ -163,17 +174,31 @@ const Feedback = () => {
       };
     });
   };
-
+  //this function handles form submit data
   const onFormSubmitHandler = (data) => {
     if (isValid) {
       handleNext(feedbackData?.[`page${currentPage}`]);
     }
   };
-
+  //this function handles next page count and state
+  const handleNext = (currentPageData) => {
+    setCurrentpage(currentPage + 1);
+    PatchRequest(currentPageData);
+  };
+  //this function handles prev page count and state
+  const handlePrev = () => {
+    if (currentPage <= 2) {
+      GetRequest();
+    } else {
+      PatchRequest(feedbackData?.[`page${currentPage - 2}`]);
+    }
+    setCurrentpage(currentPage - 1);
+  };
+  //this function handles button click events
   const handleClick = (clickEvent) => {
     if (cardType === "thankyou") {
       window.open(pageData?.redirect, "_self");
-    } else if (clickEvent?.target?.textContent === "Prev") {
+    } else if (clickEvent?.target?.textContent?.toLowerCase() === "prev") {
       handlePrev();
     } else if (cardType === "suggetion") {
       const currentPageData = {
@@ -193,20 +218,7 @@ const Feedback = () => {
       handleNext(feedbackData?.[`page${currentPage}`]);
     }
   };
-
-  const getCheckBoxState = (optionData) => {
-    if (feedbackData[`page${currentPage}`]?.value) {
-      const splittedArray = feedbackData[`page${currentPage}`].value.split(",");
-      let isIndexMatch = false;
-      for (let i = 0; i < splittedArray?.length; i++) {
-        if (splittedArray[i] === optionData?.label) isIndexMatch = true;
-      }
-      return isIndexMatch;
-    } else {
-      return false;
-    }
-  };
-
+  //this function handles suggestion box data.by pass to next page if not entered any value
   const handleSuggetion = (suggestionEvent) => {
     const currentPageData = {
       key: pageData?.key,
@@ -219,7 +231,7 @@ const Feedback = () => {
       };
     });
   };
-
+  //this function return page component as per card type
   const PageComponent = () => {
     let pageItemList = pageData?.options;
     if (cardType === "list" && pageItemList?.length > 0) {
@@ -385,7 +397,7 @@ const Feedback = () => {
       </Box>
       <Box className="footer">
         {currentPage !== 1 && getFooterButtons().length > 0 && (
-          <Box onClick={(clickEvent) => handleClick(clickEvent)}>
+          <Box>
             {getFooterButtons().map((button, index) => {
               const currrentButton = button?.toLowerCase();
               return currrentButton === "submit" ? (
@@ -410,6 +422,10 @@ const Feedback = () => {
                     marginBottom: "12px",
                     cursor: "pointer",
                   }}
+                  onClick={(clickEvent) => {
+                    clickEvent.preventDefault();
+                    handleClick(clickEvent);
+                  }}
                 >
                   <Typography
                     sx={{
@@ -433,6 +449,10 @@ const Feedback = () => {
                       alignItems: "center",
                       flexGrow: 0,
                       textAlign: "center",
+                    }}
+                    onClick={(clickEvent) => {
+                      clickEvent.preventDefault();
+                      handleClick(clickEvent);
                     }}
                   >
                     <i
@@ -471,7 +491,10 @@ const Feedback = () => {
                       flexGrow: 0,
                       textAlign: "center",
                     }}
-                    aria-disabled={currrentButton === "next"}
+                    onClick={(clickEvent) => {
+                      clickEvent.preventDefault();
+                      currrentButton === "next" && handleClick(clickEvent);
+                    }}
                   >
                     <Typography
                       sx={{

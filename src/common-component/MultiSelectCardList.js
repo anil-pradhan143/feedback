@@ -120,7 +120,7 @@ export default function MultiSelectCardList(props) {
                     defaultValue={
                       feedbackData?.[`page${currentPage}`]?.extraParams ?? ""
                     }
-                    onBlur={(e) =>
+                    onChange={(e) =>
                       setFeedbackData((prevData) => {
                         return {
                           ...prevData,

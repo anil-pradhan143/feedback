@@ -1,10 +1,10 @@
 import { emailPattern } from "./patterns";
 
 export const ERROR_TEXTS = {
-  emptyStringText: "Field required",
-  phoneNumberInvalid: "Phone number invalid",
-  emailInvalid: "Email is invalid",
-  invalidPhoneNumber: "Phone number is invalid",
+  emptyStringText: "Please enter your name!",
+  phoneNumberInvalid: "Please enter a valid Phone number!",
+  emailInvalid: "Please enter a valid email address!",
+  invalidPhoneNumber: "Please enter a valid Phone number!",
 };
 
 export const FIELD_NAMES = {
