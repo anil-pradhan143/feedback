@@ -436,7 +436,7 @@ const Feedback = () => {
                     }}
                   >
                     <i
-                      class="arrow left"
+                      className="arrow left"
                       style={{
                         border: "solid #D6D3E9",
                         borderWidth: "0px 3px 3px 0px",
@@ -486,7 +486,7 @@ const Feedback = () => {
                       Next
                     </Typography>
                     <i
-                      class="arrow right"
+                      className="arrow right"
                       style={{
                         borderColor:
                           currrentButton === "next" ? "#34248F" : "#D6D3E9",

@@ -52,54 +52,57 @@ export default function CardList(props) {
 
   const getCSS = (value) => {
     let cssProperties = {};
-    switch (value?.toLowerCase()) {
+    let cssObject = JSON.parse(value?.split('|')[1]);
+    let label = value?.split('|')[0];
+    switch (label?.toLowerCase()?.trim()) {
       case "excellent":
         cssProperties = {
           background:
-            "linear-gradient(0deg, rgba(22, 163, 74, 0.2), rgba(22, 163, 74, 0.2)), #F2F2F2",
+          cssObject?.background,
           border: "1px solid #16A34A",
           borderRadius: "5px",
-          color: "#16A34A",
+          color:cssObject?.color,
         };
         break;
       case "very good":
         cssProperties = {
           background:
-            "linear-gradient(0deg, rgba(22, 163, 74, 0.05), rgba(22, 163, 74, 0.05)), rgba(242, 242, 242, 0.5)",
+          cssObject?.background,
           border: "1px solid #16A34A",
           borderRadius: "5px",
-          color: "#16A34A",
+          color: cssObject?.color,
         };
         break;
       case "good":
         cssProperties = {
-          background: "rgba(242, 242, 242, 0.66)",
+          background: cssObject?.background,
           border: "1px solid rgba(45, 31, 122, 0.66)",
           borderRadius: "5px",
-          color: "rgba(45, 31, 122, 0.66)",
+          color: cssObject?.color,
         };
         break;
       case "satisfactory":
         cssProperties = {
           background:
-            "linear-gradient(0deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.05)), rgba(242, 242, 242, 0.25)",
+          cssObject?.background,
           border: "1px solid rgba(220, 38, 38, 0.66)",
           borderRadius: "5px",
-          color: "rgba(220, 38, 38, 0.66)",
+          color:cssObject?.color,
         };
         break;
       case "bad":
         cssProperties = {
           background:
-            "linear-gradient(0deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.2)), rgba(242, 242, 242, 0.5)",
+          cssObject?.background,
           border: "1px solid rgba(220, 38, 38, 0.66)",
           borderRadius: "5px",
-          color: "rgba(220, 38, 38, 0.66)",
+          color:cssObject?.color,
         };
         break;
     }
     return cssProperties;
   };
+
   const ItemList = () => {
     const cardItems =
       props?.pageData?.options?.length > 0 ? props.pageData.options : [];
@@ -140,7 +143,7 @@ export default function CardList(props) {
                   textTransform: "capitalize",
                 }}
               >
-                {label}
+                {label?.split('|')[0]}
               </Typography>
             </Item>
           </Box>
