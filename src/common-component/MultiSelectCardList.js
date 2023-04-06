@@ -19,6 +19,7 @@ const Item = styled(Paper)(() => ({
   border: "1px solid rgba(45, 31, 122, 0.66)",
   borderRadius: "5px",
   marginBottom: "12px",
+  boxShadow: "none",
 }));
 
 export default function MultiSelectCardList(props) {
@@ -148,6 +149,7 @@ export default function MultiSelectCardList(props) {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
+        mt: 7,
       }}
     >
       <Box>

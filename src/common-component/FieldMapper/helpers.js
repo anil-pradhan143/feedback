@@ -17,4 +17,4 @@ export const emailRules = {
   pattern: emailPattern,
 };
 
-export const defaultCountry = "AE";
+export const defaultCountry = "ae";

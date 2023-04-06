@@ -24,7 +24,8 @@ export const FieldMapper = (props) => {
     setError,
     clearErrors,
     onChange,
-    control
+    control,
+    setValue
   } = props;
 
   return (
@@ -49,7 +50,8 @@ export const FieldMapper = (props) => {
                 setError,
                 clearErrors,
                 onChange,
-                control
+                control,
+                setValue
               }}
             />
           </Grid>

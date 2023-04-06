@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { Typography } from "@mui/material";
-import PhoneInput from "react-phone-number-input";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import PropTypes from "prop-types";
+import PhoneInput from "react-phone-input-2";
 
 import { ERROR_TEXTS, defaultCountry } from "../helpers";
 
 import "react-phone-number-input/style.css";
 import "../styles.css";
-
+import "react-phone-input-2/lib/style.css";
+import { Controller } from "react-hook-form";
 /**
  * @returns
  * Phone number Fields with respective validations and country selections
@@ -26,17 +27,19 @@ export const FormPhoneCountryInput = (props) => {
     setError,
     clearErrors,
     onChange,
+    setValue,
+    control,
   } = props;
 
   const handleValidate = (value) => {
     if (value) {
-      onChange(name,value)
-      setStateNumber(value.replace(/\s/g, ""))
-      const isValid = isValidPhoneNumber(value);
+      onChange(name, value);
+      setStateNumber(value.replace(/\s/g, ""));
+      setValue(name, value.replace(/\s/g, ""));
+      const isValid = isValidPhoneNumber("+" + value);
       if (!isValid) {
-        return setError(name, { message: ERROR_TEXTS.phoneNumberInvalid });
+        return ERROR_TEXTS.invalidPhoneNumber;
       }
-      clearErrors(name);
     }
   };
   const errorMapper = (error) => {
@@ -47,19 +50,26 @@ export const FormPhoneCountryInput = (props) => {
   return (
     <>
       <div className={"form-country-input-wrapper"}>
-        <PhoneInput
-          {...register(name, {
-            required: isFieldRequired,
-            minLength: {
-              value: 5,
-              message: ERROR_TEXTS.invalidPhoneNumber,
-            },
-          })}
-          defaultCountry={defaultCountry}
-          international
-          value={stateNumber}
-          countryCallingCodeEditable={true}
-          onChange={handleValidate}
+        <Controller
+          control={control}
+          name={name}
+          rules={{
+            required: "Please enter a valid phone number!",
+            validate: (value) => handleValidate(value),
+          }}
+          render={({ field: { ref, ...field } }) => {
+            return (
+              <PhoneInput
+                enableSearch={true}
+                {...field}
+                innerRef={ref}
+                country={defaultCountry}
+                international
+                value={stateNumber}
+                countryCallingCodeEditable={true}
+              />
+            );
+          }}
         />
       </div>
       {errors?.[items.value] && (

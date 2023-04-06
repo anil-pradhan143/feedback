@@ -11,8 +11,12 @@
 
 .errorTextStyle {
   display: flex;
-  color: red;
+  justify-content: center;
+  align-items: center;
+  color: #2D1F7A;
   font-family: "Raleway";
+  font-size: 12px;
+opacity: 70%;
 }
 
 .PhoneInputInput:focus {
@@ -39,10 +43,54 @@
   border-radius: 10px;
   padding-left: 15px;
   padding-right: 5px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .pt-3 {
   padding-top: 15px;
+}
+
+.react-tel-input .country-list .country {
+  text-align: left;
+}
+
+.search {
+  text-align: left;
+}
+
+.react-tel-input .form-control {
+  border: 0 !important;
+}
+
+.react-tel-input .form-control:focus {
+  border: 0 !important;
+}
+
+.react-tel-input .flag-dropdown {
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.react-tel-input .form-control {
+  font: inherit !important;
+  padding-left: 0px !important;
+  width: 70% !important;
+
+}
+
+.react-tel-input .country-list .search {
+  top: -2px !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border: 0px !important;
+}
+
+.react-tel-input .selected-flag .arrow{
+  top: 0% !important
+}
+.selected-flag .arrow {
+  padding: 0px !important; 
+  padding-top: 6px !important;
 }

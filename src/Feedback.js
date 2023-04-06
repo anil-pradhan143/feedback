@@ -14,14 +14,8 @@ import CarTaxi from "./assets/cars-taxi.png";
 import ThanksForFeedback from "./assets/thanks.png";
 import { FieldMapper } from "./common-component";
 import { useForm } from "react-hook-form";
+import TriggersTooltips from "./common-component/ToolTip";
 import "./App.css";
-
-const CtTaxiNumber = styled(Box)(() => ({
-  color: "#2D1F7A",
-  opacity: "66%",
-  fontSize: "11px",
-  lineHeight: "14px",
-}));
 
 const Feedback = () => {
   //state variables
@@ -34,6 +28,8 @@ const Feedback = () => {
     formState: { errors, isValid },
     handleSubmit,
     clearErrors,
+    getValues,
+    setValue,
     control,
   } = useForm({ mode: "onChange" });
 
@@ -126,13 +122,13 @@ const Feedback = () => {
   // this function handles footer button logic
   const getFooterButtons = () => {
     let FooterButtons = [];
-    if (cardType === "form") {
+    if (cardType?.toLowerCase() === "form") {
       FooterButtons.push("Submit");
-    } else if (cardType === "thankyou") {
+    } else if (cardType?.toLowerCase() === "thankyou") {
       FooterButtons.push("Go to CarsTaxi.ae");
     } else if (
       feedbackData?.[`page${currentPage}`]?.value ||
-      cardType === "suggetion"
+      cardType?.toLowerCase() === "suggetion"
     ) {
       if (
         feedbackData?.[`page${currentPage}`]?.value?.toLowerCase() ===
@@ -169,13 +165,16 @@ const Feedback = () => {
         [`page${currentPage}`]: {
           ...prevData?.[`page${currentPage}`],
           key: pageData?.key,
-          [name]: value,
+          value: {
+            ...prevData?.[`page${currentPage}`]?.value,
+            [name]: value,
+          },
         },
       };
     });
   };
   //this function handles form submit data
-  const onFormSubmitHandler = (data) => {
+  const onFormSubmitHandler = () => {
     if (isValid) {
       handleNext(feedbackData?.[`page${currentPage}`]);
     }
@@ -196,11 +195,11 @@ const Feedback = () => {
   };
   //this function handles button click events
   const handleClick = (clickEvent) => {
-    if (cardType === "thankyou") {
+    if (cardType?.toLowerCase() === "thankyou") {
       window.open(pageData?.redirect, "_self");
     } else if (clickEvent?.target?.textContent?.toLowerCase() === "prev") {
       handlePrev();
-    } else if (cardType === "suggetion") {
+    } else if (cardType?.toLowerCase() === "suggetion") {
       const currentPageData = {
         key: pageData?.key,
         value: feedbackData?.[`page${currentPage}`]?.value ?? "",
@@ -212,8 +211,9 @@ const Feedback = () => {
         };
       });
       handleNext(currentPageData);
-    } else if (cardType === "form") {
-      handleSubmit(onFormSubmitHandler)();
+    } else if (cardType?.toLowerCase() === "form") {
+      handleSubmit(onFormSubmitHandler)(); //NEED THIS LINE TO SHOW ERROR ON BLANK FORM
+      // onFormSubmitHandler();
     } else {
       handleNext(feedbackData?.[`page${currentPage}`]);
     }
@@ -262,7 +262,7 @@ const Feedback = () => {
         ) : null;
       case "suggetion":
         return (
-          <Box>
+          <Box sx={{ mt: 6 }}>
             <Box sx={{ mb: 2 }}>
               <Typography
                 variant="h5"
@@ -299,8 +299,8 @@ const Feedback = () => {
         const { options, useOptionForm } = pageData || [];
         return (
           <form>
-            <Grid sx={{ flexGrow: 1, mt: 2 }} container spacing={2}>
-              <Grid item xs={12}>
+            <Grid sx={{ flexGrow: 1, mt: 2 }}>
+              <Grid item xs={12} sx={{ p: 1 }}>
                 <Typography className="subTitleTextStyle">
                   {pageData?.label}
                 </Typography>
@@ -316,6 +316,7 @@ const Feedback = () => {
                   clearErrors={clearErrors}
                   errors={errors}
                   control={control}
+                  setValue={setValue}
                 />
               </Grid>
             </Grid>
@@ -331,11 +332,12 @@ const Feedback = () => {
             <Typography
               variant="h5"
               sx={{
-                fontFamily: "georgia",
-                color: "#2D1F7A",
-                fontSize: "22px",
+                fontFamily: "Caudex",
+                color: "rgba(45, 31, 122, 0.9)",
+                fontSize: "24px",
                 fontWeight: 400,
-                opacity: "70%",
+                lineHeight: "31px",
+                opacity: "90%",
                 padding: "10%",
               }}
             >
@@ -369,9 +371,15 @@ const Feedback = () => {
   return (
     <Box
       className="container"
-      sx={{ display: "flex", flexDirection: "column", height: "800px" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "800px",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }}
     >
-      <Box className="header" sx={currentPage === 1 ? {} : { pb: "50px" }}>
+      <Box className="header">
         <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
       </Box>
 
@@ -384,7 +392,7 @@ const Feedback = () => {
               fontSize: "14px",
               fontWeight: 600,
               opacity: "70%",
-              mb: 4,
+              mt: 3,
             }}
           >
             {pageData?.message}
@@ -400,7 +408,8 @@ const Feedback = () => {
           <Box>
             {getFooterButtons().map((button, index) => {
               const currrentButton = button?.toLowerCase();
-              return currrentButton === "submit" ? (
+              return currrentButton === "submit" ||
+                currrentButton === "go to carstaxi.ae" ? (
                 <Paper
                   key={index}
                   elevation={2}
@@ -436,6 +445,7 @@ const Feedback = () => {
                       opacity: currrentButton === "prev" ? "70%" : "100%",
                       textDecoration: "none",
                       textTransform: "none",
+                      cursor: "pointer",
                     }}
                   >
                     {button}
@@ -449,6 +459,7 @@ const Feedback = () => {
                       alignItems: "center",
                       flexGrow: 0,
                       textAlign: "center",
+                      cursor: "pointer",
                     }}
                     onClick={(clickEvent) => {
                       clickEvent.preventDefault();
@@ -458,7 +469,7 @@ const Feedback = () => {
                     <i
                       className="arrow left"
                       style={{
-                        border: "solid #D6D3E9",
+                        border: "solid #34248F",
                         borderWidth: "0px 3px 3px 0px",
                       }}
                     ></i>
@@ -468,7 +479,7 @@ const Feedback = () => {
                         fontSize: "14px",
                         fontWeight: 800,
                         fontFamily: "Raleway",
-                        color: "#D6D3E9",
+                        color: "#34248F",
                       }}
                     >
                       Prev
@@ -490,6 +501,7 @@ const Feedback = () => {
                       alignItems: "center",
                       flexGrow: 0,
                       textAlign: "center",
+                      cursor: "pointer",
                     }}
                     onClick={(clickEvent) => {
                       clickEvent.preventDefault();
@@ -523,10 +535,11 @@ const Feedback = () => {
             })}
           </Box>
         )}
+
         {currentPage === 1 && (
-          <CtTaxiNumber>
-            <Typography>{pageData?.ctNum}</Typography>
-          </CtTaxiNumber>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <TriggersTooltips msg={pageData?.ctNum} />
+          </Box>
         )}
       </Box>
     </Box>

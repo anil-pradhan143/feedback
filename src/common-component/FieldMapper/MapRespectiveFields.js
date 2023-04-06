@@ -22,7 +22,8 @@ export const MapRespectiveFields = (props) => {
     setError,
     clearErrors,
     onChange,
-    control
+    control,
+    setValue
   } = props;
 
   const fieldValue =
@@ -66,6 +67,8 @@ export const MapRespectiveFields = (props) => {
     rules,
     setError,
     onChange,
+    setValue,
+    control
   }) => {
     return (
       <FormPhoneCountryInput
@@ -81,6 +84,8 @@ export const MapRespectiveFields = (props) => {
           setError,
           clearErrors,
           onChange,
+          setValue,
+          control
         }}
       />
     );
@@ -93,7 +98,9 @@ export const MapRespectiveFields = (props) => {
     setError,
     clearErrors,
     onChange,
-    control
+    control,
+    setValue,
+
   }) => {
     switch (name) {
       case FIELD_NAMES.NAME:
@@ -111,7 +118,9 @@ export const MapRespectiveFields = (props) => {
           value,
           setError,
           clearErrors,
-          onChange
+          onChange,
+          setValue,
+          control
         });
       case FIELD_NAMES.EMAIL:
         return renderTextField({
@@ -140,7 +149,8 @@ export const MapRespectiveFields = (props) => {
     setError,
     clearErrors,
     onChange,
-    control
+    control,
+    setValue
   });
 };
 

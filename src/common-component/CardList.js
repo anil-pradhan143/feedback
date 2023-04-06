@@ -99,6 +99,8 @@ export default function CardList(props) {
           };
           break;
       }
+    } else {
+      cssProperties = { color: "#2D1F7A" };
     }
     return cssProperties;
   };
@@ -153,7 +155,10 @@ export default function CardList(props) {
   };
 
   return (
-    <Container className="multiSelectGroup">
+    <Container
+      className="singleSelectGroup"
+      sx={currentPage === 1 ? {} : { mt: 7 }}
+    >
       {currentPage === 1 && (
         <StyledBox>
           <Typography
