@@ -18,18 +18,7 @@ import { Controller } from "react-hook-form";
 
 export const FormPhoneCountryInput = (props) => {
   const [stateNumber, setStateNumber] = useState("");
-  const {
-    register,
-    name,
-    isFieldRequired,
-    errors,
-    items,
-    setError,
-    clearErrors,
-    onChange,
-    setValue,
-    control,
-  } = props;
+  const { name, errors, items, onChange, setValue, control } = props;
 
   const handleValidate = (value) => {
     if (value) {

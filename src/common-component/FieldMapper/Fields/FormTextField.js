@@ -1,8 +1,8 @@
 import React from "react";
-import { Typography, Paper } from "@mui/material";
+import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
 import PropTypes from "prop-types";
-import { useForm, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 import "../styles.css";
 
@@ -12,18 +12,8 @@ import "../styles.css";
  */
 
 export const FormTextField = (props) => {
-  const {
-    name,
-    isFieldRequired,
-    value,
-    type,
-    rules,
-    errors,
-    register,
-    items,
-    onChange,
-    control,
-  } = props;
+  const { name, isFieldRequired, rules, errors, items, onChange, control } =
+    props;
   const { pattern = {} } = rules || {};
   const formOnchange = onChange;
   const errorMapper = (error) => {
@@ -40,13 +30,15 @@ export const FormTextField = (props) => {
           required: isFieldRequired,
           pattern,
         }}
-        render={({ field: { onChange, value='' } }) => (
+        render={({ field: { onChange, value = "" } }) => (
           <TextField
             name={name}
             type={name}
             onChange={(event) => {
-              onChange(event.target.value);
-              formOnchange(name, event.target.value);
+              const val = event.target.value || ''
+              const scriptFilteredValue = val.replace("<script","O_o");
+              onChange(scriptFilteredValue);
+              formOnchange(name, scriptFilteredValue);
             }}
             className={"textStyleInputField"}
             id={items?.value}

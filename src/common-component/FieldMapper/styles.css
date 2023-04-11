@@ -11,12 +11,11 @@
 
 .errorTextStyle {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #2D1F7A;
+  padding-left: 5px;
+  color: red;
   font-family: "Raleway";
   font-size: 12px;
-opacity: 70%;
+/* opacity: 70%; */
 }
 
 .PhoneInputInput:focus {
@@ -93,4 +92,8 @@ opacity: 70%;
 .selected-flag .arrow {
   padding: 0px !important; 
   padding-top: 6px !important;
+}
+
+.MuiOutlinedInput-input{
+  border-radius: 10px !important;
 }

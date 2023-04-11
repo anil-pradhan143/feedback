@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Paper } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Grid } from "@mui/material";
 import PropTypes from "prop-types";
 
@@ -25,7 +25,7 @@ export const FieldMapper = (props) => {
     clearErrors,
     onChange,
     control,
-    setValue
+    setValue,
   } = props;
 
   return (
@@ -51,7 +51,7 @@ export const FieldMapper = (props) => {
                 clearErrors,
                 onChange,
                 control,
-                setValue
+                setValue,
               }}
             />
           </Grid>

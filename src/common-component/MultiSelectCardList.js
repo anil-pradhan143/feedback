@@ -24,7 +24,7 @@ const Item = styled(Paper)(() => ({
 
 export default function MultiSelectCardList(props) {
   const [checkBoxState, setCheckboxState] = useState(props?.pageData?.options);
-  const [selectedItems, setSelectedItems] = useState(props?.selectedItemList);
+  const [selectedItems] = useState(props?.selectedItemList);
   const { feedbackData, setFeedbackData, currentPage } = useContext(AppContext);
 
   const handleOnChange = (id, label) => {
@@ -80,10 +80,10 @@ export default function MultiSelectCardList(props) {
                     items?.checked
                       ? { backgroundColor: "#362593" }
                       : {
-                          backgroundColor: "#D6D3E9",
-                          border: 0,
-                          content: "none",
-                        }
+                        backgroundColor: "#D6D3E9",
+                        border: 0,
+                        content: "none",
+                      }
                   }
                 />
               </div>
@@ -123,11 +123,13 @@ export default function MultiSelectCardList(props) {
                     }
                     onChange={(e) =>
                       setFeedbackData((prevData) => {
+                        const val = e.target.value
+                        const scriptFilteredValue = val.replace("<script", "O_o");
                         return {
                           ...prevData,
                           [`page${currentPage}`]: {
                             ...prevData?.[`page${currentPage}`],
-                            extraParams: e.target.value,
+                            extraParams: scriptFilteredValue,
                           },
                         };
                       })
@@ -149,7 +151,6 @@ export default function MultiSelectCardList(props) {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        mt: 7,
       }}
     >
       <Box>

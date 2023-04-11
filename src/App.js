@@ -15,36 +15,32 @@ const StyledCard = styled((props) => {
   return <Paper {...other} />;
 })(() => ({
   outline: "0px",
-  margin: "auto",
-  justifyContent: "center",
   textAlign: "center",
-  padding: "20px",
+  padding: "0px 24px",
   boxShadow: "none",
   gap: "10px",
   border: "4px solid #34248F",
   borderRadius: "10px",
-  minHeight: "800px",
   maxWidth: "400px",
-  display: "flex",
-  flexDirection: "column",
-  height: "auto",
+  position: "absolute",
+  top: "10px",
+  left: "10px",
+  right: "10px",
+  bottom: "10px",
+  overflow: "auto",
 }));
 
 const App = () => {
   return (
     <AppProvider>
-      <Container>
-        <StyledCard variant="outlined">
-          <Box>
-            <Router>
-              <Switch>
-                <Route exact path="/voc" component={Feedback} />
-                <Route exact path="/404" component={InvalidQRCode} />
-              </Switch>
-            </Router>
-          </Box>
-        </StyledCard>
-      </Container>
+      <StyledCard variant="outlined" className="root">
+        <Router>
+          <Switch>
+            <Route exact path="/voc" component={Feedback} />
+            <Route exact path="/404" component={InvalidQRCode} />
+          </Switch>
+        </Router>
+      </StyledCard>
     </AppProvider>
   );
 };

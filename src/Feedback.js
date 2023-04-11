@@ -6,7 +6,6 @@ import HomeCard from "./common-component/CardList";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { Typography, Paper } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import { baseUrl } from "./Constants";
@@ -28,7 +27,6 @@ const Feedback = () => {
     formState: { errors, isValid },
     handleSubmit,
     clearErrors,
-    getValues,
     setValue,
     control,
   } = useForm({ mode: "onChange" });
@@ -47,7 +45,7 @@ const Feedback = () => {
   } = useContext(AppContext);
 
   let formValues = {};
-
+  let footerFullButtons = ["submit", "previous", "go to carstaxi.ae"];
   useEffect(() => {
     setPageData({});
     if (currentPage < 2) {
@@ -123,16 +121,20 @@ const Feedback = () => {
   const getFooterButtons = () => {
     let FooterButtons = [];
     if (cardType?.toLowerCase() === "form") {
+      FooterButtons.push("Previous");
       FooterButtons.push("Submit");
     } else if (cardType?.toLowerCase() === "thankyou") {
-      FooterButtons.push("Go to CarsTaxi.ae");
+      pageData?.redirect !== "end"
+        ? FooterButtons.push("Go to CarsTaxi.ae")
+        : (FooterButtons = []);
+    } else if (pageData?.key === "8") {
+      FooterButtons.push("Prev");
     } else if (
       feedbackData?.[`page${currentPage}`]?.value ||
       cardType?.toLowerCase() === "suggetion"
     ) {
       if (
-        feedbackData?.[`page${currentPage}`]?.value?.toLowerCase() ===
-          "others" &&
+        feedbackData?.[`page${currentPage}`]?.value === "Others" &&
         !feedbackData?.[`page${currentPage}`]?.extraParams
       ) {
         FooterButtons.push("Prev");
@@ -195,9 +197,10 @@ const Feedback = () => {
   };
   //this function handles button click events
   const handleClick = (clickEvent) => {
+    let currenttext = clickEvent?.currentTarget?.id?.toLowerCase();
     if (cardType?.toLowerCase() === "thankyou") {
       window.open(pageData?.redirect, "_self");
-    } else if (clickEvent?.target?.textContent?.toLowerCase() === "prev") {
+    } else if (currenttext === "prev" || currenttext === "previous") {
       handlePrev();
     } else if (cardType?.toLowerCase() === "suggetion") {
       const currentPageData = {
@@ -220,9 +223,11 @@ const Feedback = () => {
   };
   //this function handles suggestion box data.by pass to next page if not entered any value
   const handleSuggetion = (suggestionEvent) => {
+    const val = suggestionEvent.target.value || "";
+    const scriptFilteredValue = val.replace("<script", "O_o");
     const currentPageData = {
       key: pageData?.key,
-      value: suggestionEvent?.target?.value ?? "",
+      value: scriptFilteredValue,
     };
     setFeedbackData((prevData) => {
       return {
@@ -262,7 +267,7 @@ const Feedback = () => {
         ) : null;
       case "suggetion":
         return (
-          <Box sx={{ mt: 6 }}>
+          <Box>
             <Box sx={{ mb: 2 }}>
               <Typography
                 variant="h5"
@@ -299,7 +304,7 @@ const Feedback = () => {
         const { options, useOptionForm } = pageData || [];
         return (
           <form>
-            <Grid sx={{ flexGrow: 1, mt: 2 }}>
+            <Grid sx={{ flexGrow: 1 }}>
               <Grid item xs={12} sx={{ p: 1 }}>
                 <Typography className="subTitleTextStyle">
                   {pageData?.label}
@@ -326,7 +331,7 @@ const Feedback = () => {
         return (
           <Box
             sx={{
-              mt: "50%",
+              mt: "30%",
             }}
           >
             <Typography
@@ -369,47 +374,61 @@ const Feedback = () => {
   };
 
   return (
-    <Box
-      className="container"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "800px",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-      }}
-    >
-      <Box className="header">
-        <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
-      </Box>
-
-      {currentPage === 2 && (
-        <Box>
-          <Typography
-            sx={{
-              fontFamily: "Raleway",
-              color: "#2D1F7A",
-              fontSize: "14px",
-              fontWeight: 600,
-              opacity: "70%",
-              mt: 3,
-            }}
-          >
-            {pageData?.message}
-          </Typography>
+    <>
+      <Box
+        className="container"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100%",
+          textOverflow: "ellipsis",
+        }}
+      >
+        <Box className="header">
+          <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
         </Box>
-      )}
 
-      <Box className="component" sx={{ flex: 1 }}>
-        {PageComponent()}
-      </Box>
-      <Box className="footer">
-        {currentPage !== 1 && getFooterButtons().length > 0 && (
+        {currentPage === 2 && (
           <Box>
+            <Typography
+              sx={{
+                fontFamily: "Raleway",
+                color: "#2D1F7A",
+                fontSize: "14px",
+                fontWeight: 600,
+                opacity: "70%",
+                mt: 3,
+              }}
+            >
+              {pageData?.message}
+            </Typography>
+          </Box>
+        )}
+
+        <Box className="component" sx={{ flex: 1, pb: 6, pt: 6 }}>
+          {PageComponent()}
+        </Box>
+        {currentPage === 1 && (
+          <Box sx={{ display: "flex", justifyContent: "flex-end", pb: 1 }}>
+            <TriggersTooltips msg={pageData?.ctNum} />
+          </Box>
+        )}
+      </Box>
+      <Box
+        className="footer"
+        style={{
+          position: "-webkit-sticky",
+          position: "sticky",
+          bottom: 0,
+          backgroundColor: "white",
+          width: "100%s",
+        }}
+      >
+        {currentPage !== 1 && getFooterButtons().length > 0 && (
+          <Box sx={{ pb: 1 }}>
             {getFooterButtons().map((button, index) => {
               const currrentButton = button?.toLowerCase();
-              return currrentButton === "submit" ||
-                currrentButton === "go to carstaxi.ae" ? (
+              return footerFullButtons.includes(currrentButton) ? (
                 <Paper
                   key={index}
                   elevation={2}
@@ -425,11 +444,12 @@ const Feedback = () => {
                     gap: "10px",
                     minWidth: "80%",
                     background:
-                      currrentButton === "prev" ? "#FFFFFF" : "#34248F",
+                      currrentButton === "previous" ? "#FFFFFF" : "#34248F",
                     border: "1px solid rgba(45, 31, 122, 0.66)",
                     borderRadius: "5px",
                     marginBottom: "12px",
                     cursor: "pointer",
+                    boxShadow: "none",
                   }}
                   onClick={(clickEvent) => {
                     clickEvent.preventDefault();
@@ -441,8 +461,9 @@ const Feedback = () => {
                       fontSize: "14px",
                       fontWeight: 600,
                       lineHeight: "16px",
-                      color: currrentButton === "prev" ? "#2D1F7A" : "#FFFFFF",
-                      opacity: currrentButton === "prev" ? "70%" : "100%",
+                      color:
+                        currrentButton === "previous" ? "#2D1F7A" : "#FFFFFF",
+                      opacity: currrentButton === "previous" ? "70%" : "100%",
                       textDecoration: "none",
                       textTransform: "none",
                       cursor: "pointer",
@@ -461,29 +482,34 @@ const Feedback = () => {
                       textAlign: "center",
                       cursor: "pointer",
                     }}
-                    onClick={(clickEvent) => {
-                      clickEvent.preventDefault();
-                      handleClick(clickEvent);
-                    }}
                   >
-                    <i
-                      className="arrow left"
-                      style={{
-                        border: "solid #34248F",
-                        borderWidth: "0px 3px 3px 0px",
+                    <span
+                      onClick={(clickEvent) => {
+                        clickEvent.preventDefault();
+                        handleClick(clickEvent);
                       }}
-                    ></i>
-                    <Typography
-                      sx={{
-                        paddingLeft: "10px",
-                        fontSize: "14px",
-                        fontWeight: 800,
-                        fontFamily: "Raleway",
-                        color: "#34248F",
-                      }}
+                      id="prev"
+                      style={{ display: "flex" }}
                     >
-                      Prev
-                    </Typography>
+                      <i
+                        className="arrow left"
+                        style={{
+                          border: "solid #34248F",
+                          borderWidth: "0px 3px 3px 0px",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          paddingLeft: "10px",
+                          fontSize: "14px",
+                          fontWeight: 800,
+                          fontFamily: "Raleway",
+                          color: "#34248F",
+                        }}
+                      >
+                        Prev
+                      </Typography>
+                    </span>
                   </div>
 
                   <div
@@ -503,46 +529,45 @@ const Feedback = () => {
                       textAlign: "center",
                       cursor: "pointer",
                     }}
-                    onClick={(clickEvent) => {
-                      clickEvent.preventDefault();
-                      currrentButton === "next" && handleClick(clickEvent);
-                    }}
                   >
-                    <Typography
-                      sx={{
-                        paddingRight: "10px",
-                        fontFamily: "Raleway",
-                        fontSize: "14px",
-                        fontWeight: 800,
-                        color:
-                          currrentButton === "next" ? "#34248F" : "#D6D3E9",
+                    <span
+                      onClick={(clickEvent) => {
+                        clickEvent.preventDefault();
+                        currrentButton === "next" && handleClick(clickEvent);
                       }}
+                      id="next"
+                      style={{ display: "flex" }}
                     >
-                      Next
-                    </Typography>
-                    <i
-                      className="arrow right"
-                      style={{
-                        borderColor:
-                          currrentButton === "next" ? "#34248F" : "#D6D3E9",
-                        borderStyle: "solid",
-                        borderWidth: "0px 3px 3px 0px",
-                      }}
-                    ></i>
+                      <Typography
+                        sx={{
+                          paddingRight: "10px",
+                          fontFamily: "Raleway",
+                          fontSize: "14px",
+                          fontWeight: 800,
+                          color:
+                            currrentButton === "next" ? "#34248F" : "#D6D3E9",
+                        }}
+                      >
+                        Next
+                      </Typography>
+                      <i
+                        className="arrow right"
+                        style={{
+                          borderColor:
+                            currrentButton === "next" ? "#34248F" : "#D6D3E9",
+                          borderStyle: "solid",
+                          borderWidth: "0px 3px 3px 0px",
+                        }}
+                      />
+                    </span>
                   </div>
                 </Box>
               );
             })}
           </Box>
         )}
-
-        {currentPage === 1 && (
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <TriggersTooltips msg={pageData?.ctNum} />
-          </Box>
-        )}
       </Box>
-    </Box>
+    </>
   );
 };
 

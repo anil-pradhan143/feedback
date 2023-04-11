@@ -28,7 +28,7 @@ const Item = styled(Paper)(() => ({
 }));
 
 const StyledBox = styled(Box)(() => ({
-  marginTop: "24px",
+  marginBottom: "24px",
 }));
 
 export default function CardList(props) {
@@ -119,7 +119,7 @@ export default function CardList(props) {
             sx={{
               cursor: "pointer",
               width: "100%",
-              marginBottom: "24px",
+              marginBottom: "15px",
             }}
             onClick={(e) => handleClick(e)}
           >
@@ -155,10 +155,7 @@ export default function CardList(props) {
   };
 
   return (
-    <Container
-      className="singleSelectGroup"
-      sx={currentPage === 1 ? {} : { mt: 7 }}
-    >
+    <Container className="singleSelectGroup">
       {currentPage === 1 && (
         <StyledBox>
           <Typography
