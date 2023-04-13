@@ -70,10 +70,14 @@ export const MapRespectiveFields = (props) => {
     setValue,
     control
   }) => {
+    const fieldVAluesTemp  = fieldsFormData?.[`page${currentPage}`]?.value || {}
+    const temp2 = fieldVAluesTemp&& fieldVAluesTemp || ''
+    const defaultValue = temp2[name]
     return (
       <FormPhoneCountryInput
         {...{
           name,
+          defaultValue,
           isFieldRequired,
           value,
           type,

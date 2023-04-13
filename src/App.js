@@ -28,6 +28,7 @@ const StyledCard = styled((props) => {
   right: "10px",
   bottom: "10px",
   overflow: "auto",
+  margin: "auto",
 }));
 
 const App = () => {
