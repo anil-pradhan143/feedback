@@ -5,14 +5,10 @@
   display: none;
 }
 body {
-  background: linear-gradient(0deg, rgba(52, 36, 143, 0.2), rgba(52, 36, 143, 0.2)), #FFFFFF;
+  background: #0555A4;
   font-family: 'Raleway';
   font-style: normal;
-  padding: 20px 0px;
-  color: #2D1F7A;
-}
-.header{
-  padding-top: 20px;
+  color: #1F4D7A;
 }
 
 .textStyleFieldLabel {
@@ -21,7 +17,7 @@ body {
 
 .subTitleTextStyle {
 font-family: "Raleway";
-color: #2D1F7A;
+color: #1F4D7A;
 font-size: 14px;
 font-weight: 600;
 opacity: 70%;

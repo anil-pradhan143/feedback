@@ -17,7 +17,15 @@ import { Controller } from "react-hook-form";
  */
 
 export const FormPhoneCountryInput = (props) => {
-  const { name, errors, items, onChange, setValue, control,defaultValue='' } = props;
+  const {
+    name,
+    errors,
+    items,
+    onChange,
+    setValue,
+    control,
+    defaultValue = "",
+  } = props;
   const [stateNumber, setStateNumber] = useState(defaultValue);
 
   const handleValidate = (value) => {
@@ -49,6 +57,7 @@ export const FormPhoneCountryInput = (props) => {
           render={({ field: { ref, ...field } }) => {
             return (
               <PhoneInput
+                sx={{ left: "-16px", borderColor: "#F2F2F2" }}
                 enableSearch={true}
                 {...field}
                 innerRef={ref}

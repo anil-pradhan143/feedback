@@ -9,12 +9,32 @@ import { Typography, Paper } from "@mui/material";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import { baseUrl } from "./Constants";
-import CarTaxi from "./assets/cars-taxi.png";
+import CarTaxi from "./assets/Car-Taxi.png";
 import ThanksForFeedback from "./assets/thanks.png";
 import { FieldMapper } from "./common-component";
 import { useForm } from "react-hook-form";
+import { styled } from "@mui/material/styles";
 import TriggersTooltips from "./common-component/ToolTip";
 import "./App.css";
+
+const StyledCard = styled(Box)(() => ({
+  outline: "0px",
+  textAlign: "center",
+  overflow: "auto",
+  margin: "auto",
+  border: 0,
+}));
+
+const StyledFooter = styled(Box)(() => ({
+  outline: "0px",
+  textAlign: "center",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: "#F0F5FA",
+  height: "56px",
+}));
 
 const Feedback = () => {
   //state variables
@@ -95,6 +115,7 @@ const Feedback = () => {
         } else {
           setPageData(data?.data);
           CardType(data?.data);
+       
         }
       })
       .catch((err) => {
@@ -121,7 +142,6 @@ const Feedback = () => {
   const getFooterButtons = () => {
     let FooterButtons = [];
     if (cardType?.toLowerCase() === "form") {
-      FooterButtons.push("Previous");
       FooterButtons.push("Submit");
     } else if (cardType?.toLowerCase() === "thankyou") {
       pageData?.redirect !== "end"
@@ -276,8 +296,7 @@ const Feedback = () => {
                   fontSize: "20px",
                   lineHeight: "26px",
                   fontWeight: 400,
-                  color: "rgba(45, 31, 122, 0.9)",
-                  opacity: "70%",
+                  color: "#1F4D7A",
                   textDecoration: "none",
                   textTransform: "capitalize",
                 }}
@@ -286,7 +305,7 @@ const Feedback = () => {
               </Typography>
             </Box>
             {pageData?.useFreeText && (
-              <Box sx={{ border: "1px solid #362593", borderRadius: "10px" }}>
+              <Box sx={{ border: "1px solid #0555A4", borderRadius: "10px" }}>
                 <TextField
                   id="useFreeTextbox"
                   label=""
@@ -306,7 +325,7 @@ const Feedback = () => {
           <form>
             <Grid sx={{ flexGrow: 1 }}>
               <Grid item xs={12} sx={{ p: 1 }}>
-                <Typography className="subTitleTextStyle">
+                <Typography className="subTitleTextStyle" sx={{color:'#0555A4',fontWeight:'600'}}>
                   {pageData?.label}
                 </Typography>
                 <FieldMapper
@@ -331,18 +350,17 @@ const Feedback = () => {
         return (
           <Box
             sx={{
-              mt: "30%",
+              mt: "20%",
             }}
           >
             <Typography
               variant="h5"
               sx={{
                 fontFamily: "Caudex",
-                color: "rgba(45, 31, 122, 0.9)",
+                color: "#1F4D7A",
                 fontSize: "24px",
                 fontWeight: 400,
                 lineHeight: "31px",
-                opacity: "90%",
                 padding: "10%",
               }}
             >
@@ -373,17 +391,26 @@ const Feedback = () => {
     }
   };
 
+  const StyledHeader = (fullWidth) => ({
+    outline: "0px",
+    textAlign: "center",
+    padding: "24px",
+    boxShadow: "5px 5px 5px 2px rgba(0, 0, 0, 0.2)",
+    borderRadius: "10px",
+    maxWidth: "600px",
+    position: "absolute",
+    top: "24px",
+    left: "24px",
+    right: "24px",
+    bottom: fullWidth ? "24px" : "80px",
+    background: "#fff",
+    overflow: "auto",
+    height: "auto",
+  });
+
   return (
-    <>
-      <Box
-        className="container"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100%",
-          textOverflow: "ellipsis",
-        }}
-      >
+    <StyledCard variant="outlined" className="root">
+      <Box sx={StyledHeader(currentPage === 1 ? true : false)}>
         <Box className="header">
           <img src={CarTaxi} alt="Car Taxi" loading="lazy" />
         </Box>
@@ -393,7 +420,7 @@ const Feedback = () => {
             <Typography
               sx={{
                 fontFamily: "Raleway",
-                color: "#2D1F7A",
+                color: "#737373",
                 fontSize: "14px",
                 fontWeight: 600,
                 opacity: "70%",
@@ -405,65 +432,46 @@ const Feedback = () => {
           </Box>
         )}
 
-        <Box className="component" sx={{ flex: 1, pb: 6, pt: 6 }}>
+        <Box className="component" sx={{ flex: 1, pb: 3, pt: 3 }}>
           {PageComponent()}
         </Box>
         {currentPage === 1 && (
-          <Box sx={{ display: "flex", justifyContent: "flex-end", pb: 1 }}>
+          <Box sx={{ position: "absolute", bottom: "0px", right: "20px" }}>
             <TriggersTooltips msg={pageData?.ctNum} />
           </Box>
         )}
       </Box>
-      <Box
-        className="footer"
-        style={{
-          position: "-webkit-sticky",
-          position: "sticky",
-          bottom: 0,
-          backgroundColor: "white",
-          width: "100%s",
-        }}
-      >
-        {currentPage !== 1 && getFooterButtons().length > 0 && (
-          <Box sx={{ pb: 1 }}>
+
+      {currentPage !== 1 && getFooterButtons().length > 0 && (
+        <StyledFooter>
+          <Box sx={{ marginTop: "20px" }}>
             {getFooterButtons().map((button, index) => {
               const currrentButton = button?.toLowerCase();
               return footerFullButtons.includes(currrentButton) ? (
-                <Paper
-                  key={index}
-                  elevation={2}
-                  id={button}
-                  type={"submit"}
-                  className="radioGroupItems"
-                  sx={{
-                    padding: "10px 20px",
-                    font: "Raleway",
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    lineHeight: "16px",
-                    gap: "10px",
-                    minWidth: "80%",
-                    background:
-                      currrentButton === "previous" ? "#FFFFFF" : "#34248F",
-                    border: "1px solid rgba(45, 31, 122, 0.66)",
-                    borderRadius: "5px",
-                    marginBottom: "12px",
-                    cursor: "pointer",
-                    boxShadow: "none",
-                  }}
-                  onClick={(clickEvent) => {
-                    clickEvent.preventDefault();
-                    handleClick(clickEvent);
-                  }}
-                >
+                <Box sx={{ display: "flex", alignItems:'center',justifyContent:'center' }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexGrow: 0,
+                      textAlign: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                     <span
+                      onClick={(clickEvent) => {
+                        clickEvent.preventDefault();
+                        handleClick(clickEvent);
+                      }}
+                      id={button}
+                      style={{ display: "flex" }}
+                    >
                   <Typography
                     sx={{
                       fontSize: "14px",
-                      fontWeight: 600,
+                      fontWeight: 800,
                       lineHeight: "16px",
-                      color:
-                        currrentButton === "previous" ? "#2D1F7A" : "#FFFFFF",
-                      opacity: currrentButton === "previous" ? "70%" : "100%",
+                      color:'#0555A4',
                       textDecoration: "none",
                       textTransform: "none",
                       cursor: "pointer",
@@ -471,9 +479,11 @@ const Feedback = () => {
                   >
                     {button}
                   </Typography>
-                </Paper>
+                  </span>
+                </div>
+                </Box>
               ) : (
-                <Box sx={{ display: "flex", p: 1 }}>
+                <Box sx={{ display: "flex", padding: "0px 30px" }}>
                   <div
                     style={{
                       display: "flex",
@@ -494,7 +504,7 @@ const Feedback = () => {
                       <i
                         className="arrow left"
                         style={{
-                          border: "solid #34248F",
+                          border: "solid #0555A4",
                           borderWidth: "0px 3px 3px 0px",
                         }}
                       />
@@ -504,7 +514,8 @@ const Feedback = () => {
                           fontSize: "14px",
                           fontWeight: 800,
                           fontFamily: "Raleway",
-                          color: "#34248F",
+                          color: "#0555A4",
+                          lineHeight: "normal",
                         }}
                       >
                         Prev
@@ -544,8 +555,9 @@ const Feedback = () => {
                           fontFamily: "Raleway",
                           fontSize: "14px",
                           fontWeight: 800,
+                          lineHeight: "normal",
                           color:
-                            currrentButton === "next" ? "#34248F" : "#D6D3E9",
+                            currrentButton === "next" ? "#0555A4" : "#BFBFBF",
                         }}
                       >
                         Next
@@ -554,7 +566,7 @@ const Feedback = () => {
                         className="arrow right"
                         style={{
                           borderColor:
-                            currrentButton === "next" ? "#34248F" : "#D6D3E9",
+                            currrentButton === "next" ? "#0555A4" : "#BFBFBF",
                           borderStyle: "solid",
                           borderWidth: "0px 3px 3px 0px",
                         }}
@@ -565,9 +577,9 @@ const Feedback = () => {
               );
             })}
           </Box>
-        )}
-      </Box>
-    </>
+        </StyledFooter>
+      )}
+    </StyledCard>
   );
 };
 

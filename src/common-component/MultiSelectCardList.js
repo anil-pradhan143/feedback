@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { Box, TextField, Typography, Paper } from "@mui/material";
 import { AppContext } from "../AppContext";
 import { styled } from "@mui/material/styles";
+import DriverIcon from "../assets/driver_icon.svg";
+import CarIcon from "../assets/car_right.svg";
 import "./CustomCheckbox.css";
 
 const Item = styled(Paper)(() => ({
@@ -15,11 +17,15 @@ const Item = styled(Paper)(() => ({
   lineHeight: "16px",
   gap: "10px",
   Width: "100%",
-  background: "#F2F2F2",
-  border: "1px solid rgba(45, 31, 122, 0.66)",
+  background: "rgba(242, 242, 242, 0.66)",
+  border: "1px solid #0555A4",
   borderRadius: "5px",
   marginBottom: "12px",
   boxShadow: "none",
+}));
+
+const StyledBox = styled(Box)(() => ({
+  marginBottom: "24px",
 }));
 
 export default function MultiSelectCardList(props) {
@@ -68,7 +74,11 @@ export default function MultiSelectCardList(props) {
             className="radioGroupItems"
             sx={
               items?.checked
-                ? { border: "2px solid #362593", background: "#D6D3E9" }
+                ? {
+                    border: "2px solid #0555A4",
+                    background:
+                      "linear-gradient(0deg, rgba(2, 103, 202, 0.1), rgba(2, 103, 202, 0.1)), rgba(242, 242, 242, 0.66)",
+                  }
                 : {}
             }
           >
@@ -78,12 +88,12 @@ export default function MultiSelectCardList(props) {
                   id={`lbl${index + 1}`}
                   style={
                     items?.checked
-                      ? { backgroundColor: "#362593" }
+                      ? { backgroundColor: "#0253A3" }
                       : {
-                        backgroundColor: "#D6D3E9",
-                        border: 0,
-                        content: "none",
-                      }
+                          backgroundColor: "rgba(2, 103, 202, 0.1)",
+                          border: 0,
+                          content: "none",
+                        }
                   }
                 />
               </div>
@@ -98,8 +108,7 @@ export default function MultiSelectCardList(props) {
                   fontSize: "14px",
                   fontWeight: items?.checked ? 700 : 600,
                   lineHeight: "16px",
-                  color: items?.checked ? "#362593" : "#2D1F7A",
-                  opacity: items?.checked ? "100%" : "70%",
+                  color: "#0555A4",
                   textDecoration: "none",
                   textTransform: "capitalize",
                 }}
@@ -123,8 +132,11 @@ export default function MultiSelectCardList(props) {
                     }
                     onChange={(e) =>
                       setFeedbackData((prevData) => {
-                        const val = e.target.value
-                        const scriptFilteredValue = val.replace("<script", "O_o");
+                        const val = e.target.value;
+                        const scriptFilteredValue = val.replace(
+                          "<script",
+                          "O_o"
+                        );
                         return {
                           ...prevData,
                           [`page${currentPage}`]: {
@@ -143,6 +155,16 @@ export default function MultiSelectCardList(props) {
     });
   };
 
+  const getIcon = (label) => {
+    let icon = "";
+    if (label?.includes("Captain")) {
+      icon = DriverIcon;
+    } else if (label?.includes("Car")) {
+      icon = CarIcon;
+    }
+    return icon;
+  };
+
   return (
     <Box
       className="multiSelectGroup"
@@ -153,28 +175,48 @@ export default function MultiSelectCardList(props) {
         flexDirection: "column",
       }}
     >
-      <Box>
-        <Typography
-          variant="h5"
-          sx={{
-            fontFamily: "georgia",
-            fontStyle: "normal",
-            fontSize: "20px",
-            color: "#2D1F7A",
-            opacity: "90%",
-            fontWeight: 400,
-            lineHeight: "25px",
-          }}
-        >
-          {props?.pageData?.label}
-        </Typography>
-      </Box>
+      <StyledBox
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          maxHeight: "52px",
+          textAlign: currentPage === 1 ? "center" : "left",
+          padding: "0px 20px",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ paddingRight: "16px" }}>
+          <img
+            src={getIcon(props?.pageData?.label)}
+            alt="Car Taxi"
+            style={{ maxWidth: "52px" }}
+            loading="lazy"
+          />
+        </div>
+        <div>
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: "georgia",
+              fontStyle: "normal",
+              fontSize: "20px",
+              color: "#1F4D7A",
+              opacity: "90%",
+              fontWeight: 400,
+              lineHeight: "25px",
+            }}
+          >
+            {props?.pageData?.label}
+          </Typography>
+        </div>
+      </StyledBox>
       <Box sx={{ alignSelf: "flex-start", p: "5px", mt: "5px" }}>
         <Typography
           sx={{
             fontFamily: "Raleway",
             fontSize: "14px",
-            color: "#2D1F7A",
+            color: "#1F4D7A",
             opacity: "90%",
             fontWeight: 400,
             lineHeight: "25px",

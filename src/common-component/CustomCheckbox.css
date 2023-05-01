@@ -10,12 +10,12 @@
     text-align: center;
     justify-content: center;
     background-color: #fff;
-    border: 1px solid #362593;
+    border: 1px solid #0555A4;
     border-radius: 50%;
     cursor: pointer;
     width: 24px;
     height: 24px;
-    border-color: #362593;
+    border-color: #0555A4;
 }
 
 .round label:after {

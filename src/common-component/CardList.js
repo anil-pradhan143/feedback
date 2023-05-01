@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import Box from "@mui/material/Box";
-import { Container } from "@mui/material";
 import { AppContext } from "../AppContext";
 import { Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { HomePageMsg } from "../Constants";
+import DriverIcon from "../assets/driver_icon.svg";
+import CarIcon from "../assets/car_right.svg";
 
 const Item = styled(Paper)(() => ({
   display: "flex",
@@ -13,15 +14,13 @@ const Item = styled(Paper)(() => ({
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
-  padding: "10px 20px",
   font: "Raleway",
   fontSize: "14px",
   fontWeight: 600,
   lineHeight: "16px",
-  gap: "10px",
   minWidth: "80%",
   background: "#F2F2F2",
-  border: "1px solid rgba(45, 31, 122, 0.66)",
+  border: "1px solid #0253A3",
   borderRadius: "5px",
   minHeight: "48px",
   boxShadow: "none",
@@ -61,7 +60,7 @@ export default function CardList(props) {
         case "excellent":
           cssProperties = {
             background: cssObject?.background,
-            border: "1px solid #16A34A",
+            border: "1px solid #0253A3",
             borderRadius: "5px",
             color: cssObject?.color,
           };
@@ -69,7 +68,7 @@ export default function CardList(props) {
         case "very good":
           cssProperties = {
             background: cssObject?.background,
-            border: "1px solid #16A34A",
+            border: "1px solid #0253A3",
             borderRadius: "5px",
             color: cssObject?.color,
           };
@@ -77,7 +76,7 @@ export default function CardList(props) {
         case "good":
           cssProperties = {
             background: cssObject?.background,
-            border: "1px solid rgba(45, 31, 122, 0.66)",
+            border: "1px solid #0253A3",
             borderRadius: "5px",
             color: cssObject?.color,
           };
@@ -100,7 +99,7 @@ export default function CardList(props) {
           break;
       }
     } else {
-      cssProperties = { color: "#2D1F7A" };
+      cssProperties = { color: "#0555A4" };
     }
     return cssProperties;
   };
@@ -120,6 +119,7 @@ export default function CardList(props) {
               cursor: "pointer",
               width: "100%",
               marginBottom: "15px",
+              minHeight: "48px",
             }}
             onClick={(e) => handleClick(e)}
           >
@@ -129,7 +129,7 @@ export default function CardList(props) {
               className="radioGroupItems"
               sx={
                 isSelected
-                  ? { border: "2px solid #362593", background: "#D6D3E9" }
+                  ? { border: "2px solid #0555A4", background: "#D6D3E9" }
                   : getCSS(label)
               }
             >
@@ -140,7 +140,7 @@ export default function CardList(props) {
                   fontSize: "14px",
                   fontWeight: isSelected ? 800 : 600,
                   lineHeight: "16px",
-                  color: isSelected ? "#362593" : "",
+                  color: isSelected ? "#0555A4" : "",
                   textDecoration: "none",
                   textTransform: "capitalize",
                 }}
@@ -154,8 +154,17 @@ export default function CardList(props) {
       .reverse();
   };
 
+  const getIcon = (label) => {
+    let icon = "";
+    if (label?.includes("Captain")) {
+      icon = DriverIcon;
+    } else if (label?.includes("Car")) {
+      icon = CarIcon;
+    }
+    return icon;
+  };
   return (
-    <Container className="singleSelectGroup">
+    <Box className="singleSelectGroup">
       {currentPage === 1 && (
         <StyledBox>
           <Typography
@@ -164,7 +173,7 @@ export default function CardList(props) {
               fontSize: "14px",
               fontWeight: 600,
               lineHeight: "16px",
-              color: "#2D1F7A",
+              color: "#737373",
               opacity: "66%",
             }}
           >
@@ -172,21 +181,42 @@ export default function CardList(props) {
           </Typography>
         </StyledBox>
       )}
-      <StyledBox>
-        <Typography
-          variant="h5"
-          sx={{
-            fontFamily: "georgia",
-            fontStyle: "normal",
-            fontSize: "20px",
-            color: "#2D1F7A",
-            opacity: "90%",
-            fontWeight: 400,
-            lineHeight: "25px",
-          }}
-        >
-          {props?.pageData?.label}
-        </Typography>
+
+      <StyledBox
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          textAlign: currentPage === 1 ? "center" : "left",
+          padding: "0px 20px",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {currentPage !== 1 && currentPage !== 5 && (
+          <div style={{ paddingRight: "16px" }}>
+            <img
+              src={getIcon(props?.pageData?.label)}
+              alt="Car Taxi"
+              style={{ maxWidth: "52px" }}
+              loading="lazy"
+            />
+          </div>
+        )}
+        <div>
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: "georgia",
+              fontStyle: "normal",
+              fontSize: "20px",
+              color: "#1F4D7A",
+              opacity: "90%",
+              fontWeight: 400,
+            }}
+          >
+            {props?.pageData?.label}
+          </Typography>
+        </div>
       </StyledBox>
       <StyledBox
         sx={{
@@ -195,10 +225,11 @@ export default function CardList(props) {
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
+          mt:2
         }}
       >
         {ItemList()}
       </StyledBox>
-    </Container>
+    </Box>
   );
 }

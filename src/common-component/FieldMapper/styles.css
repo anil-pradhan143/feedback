@@ -1,11 +1,11 @@
 .textStyleFieldLabel {
   display: flex;
-  color: #362593;
+  color: #0555A4;
   font-family: "Raleway";
 }
 
 .textStyleInputField {
-  border: 1px solid #2d1f7a !important;
+  border: 2px solid #0555A4 !important;
   border-radius: 10px;
 }
 
@@ -38,7 +38,7 @@
 
 .form-country-input-wrapper {
   border-style: solid;
-  border: 1px solid #2d1f7a !important;
+  border: 2px solid #0555A4 !important;
   border-radius: 10px;
   padding-left: 15px;
   padding-right: 5px;

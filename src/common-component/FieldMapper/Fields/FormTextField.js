@@ -45,8 +45,10 @@ export const FormTextField = (props) => {
             label=""
             value={value}
             fullWidth
+            sx={{color:'#0555A4'}}
           />
         )}
+        
       />
 
       {errors?.[items.value] && (
