@@ -155,7 +155,7 @@ export default function CardList(props) {
   };
 
   const getIcon = (label) => {
-    let icon = "";
+    let icon = null;
     if (label?.includes("Captain")) {
       icon = DriverIcon;
     } else if (label?.includes("Car")) {
@@ -194,12 +194,14 @@ export default function CardList(props) {
       >
         {currentPage !== 1 && currentPage !== 5 && (
           <div style={{ paddingRight: "16px" }}>
-            <img
-              src={getIcon(props?.pageData?.label)}
-              alt="Car Taxi"
-              style={{ maxWidth: "52px" }}
-              loading="lazy"
-            />
+            {getIcon(props?.pageData?.label) !== null && (
+              <img
+                src={getIcon(props?.pageData?.label)}
+                alt="Car Taxi"
+                style={{ maxWidth: "52px" }}
+                loading="lazy"
+              />
+            )}
           </div>
         )}
         <div>
@@ -225,7 +227,7 @@ export default function CardList(props) {
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
-          mt:2
+          mt: 2,
         }}
       >
         {ItemList()}
